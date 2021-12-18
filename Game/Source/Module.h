@@ -6,7 +6,7 @@
 #include "PugiXml/src/pugixml.hpp"
 
 class App;
-class PhysBody;
+class PhysicBody;
 
 class Module
 {
@@ -22,7 +22,7 @@ public:
 
 	// Called before render is available
 	// L01: DONE 5: Sending config file to all modules
-	virtual bool Awake(pugi::xml_node& config)
+	virtual bool Awake(pugi::xml_node&)
 	{
 		return true;
 	}
@@ -34,7 +34,7 @@ public:
 	}
 
 	// Called each loop iteration
-	virtual bool PreUpdate(float dt)
+	virtual bool PreUpdate()
 	{
 		return true;
 	}
@@ -46,7 +46,7 @@ public:
 	}
 
 	// Called each loop iteration
-	virtual bool PostUpdate(float dt)
+	virtual bool PostUpdate()
 	{
 		return true;
 	}
@@ -57,7 +57,6 @@ public:
 		return true;
 	}
 
-	// Called to activate module
 	virtual void Activate() {
 		active = true;
 	}
@@ -68,10 +67,9 @@ public:
 	}
 
 	// Called on two bodies collision
-	virtual void OnCollision(PhysBody* bodyA, PhysBody* bodyB)
+	virtual void OnCollision(PhysicBody* bodyA, PhysicBody* bodyB)
 	{
 	}
-
 public:
 
 	SString name;
@@ -98,7 +96,6 @@ public:
 
 private:
 	bool isEnabled = true;
-
 };
 
 #endif // __MODULE_H__
