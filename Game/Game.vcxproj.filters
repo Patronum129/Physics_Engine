@@ -43,6 +43,9 @@
     <ClCompile Include="Source\Scene.cpp">
       <Filter>Source Files\Modules</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Map.cpp">
+      <Filter>Source Files\Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Defs.h">
@@ -113,6 +116,9 @@
     </ClInclude>
     <ClInclude Include="Source\Timer.h">
       <Filter>Header Files\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Map.h">
+      <Filter>Header Files\Module</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
