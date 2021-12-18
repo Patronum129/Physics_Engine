@@ -14,7 +14,8 @@ class Input;
 class Render;
 class Textures;
 class Audio;
-class Scene;
+class GameScene;
+class PlayerModule;
 class Map;
 
 class App
@@ -49,6 +50,7 @@ public:
 	const char* GetOrganization() const;
 
 	bool IsDebugMode() { return debug; }
+
 private:
 
 	// Load config file
@@ -77,7 +79,8 @@ public:
 	Render* render;
 	Textures* tex;
 	Audio* audio;
-	Scene* scene;
+	GameScene* gameScene;
+	PlayerModule* playerModule;
 	Map* map;
 
 private:
@@ -87,12 +90,21 @@ private:
 	SString title;
 	SString organization;
 
-	List<Module *> modules;
+	List<Module*> modules;
 
+	// Create new variables from pugui namespace:
+	// a xml_document to store the config file and
+	// two xml_node to read specific branches of the xml
 	pugi::xml_document configFile;
 	pugi::xml_node config;
 	pugi::xml_node configApp;
 
+	/*unsigned int
+		lastTime,
+		currentTime;
+	float msFrame;
+
+	float dt;*/
 	PerfTimer* ptimer;
 	PerfTimer* frameDuration;
 

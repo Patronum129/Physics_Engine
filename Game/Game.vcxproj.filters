@@ -40,7 +40,7 @@
     <ClCompile Include="Source\Timer.cpp">
       <Filter>Source Files\Application</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Scene.cpp">
+    <ClCompile Include="Source\GameScene.cpp">
       <Filter>Source Files\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Source\Map.cpp">
@@ -99,7 +99,7 @@
     <ClInclude Include="Source\Render.h">
       <Filter>Header Files\Module</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Scene.h">
+    <ClInclude Include="Source\GameScene.h">
       <Filter>Header Files\Module</Filter>
     </ClInclude>
     <ClInclude Include="Source\Textures.h">
