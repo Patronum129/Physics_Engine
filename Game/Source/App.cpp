@@ -15,8 +15,6 @@
 // Constructor
 App::App(int argc, char* args[]) : argc(argc), args(args)
 {
-	frames = 0;
-
 	win = new Window();
 	input = new Input();
 	render = new Render();
@@ -26,14 +24,17 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 
 	// Ordered for awake / Start / Update
 	// Reverse order of CleanUp
-	AddModule(win);
-	AddModule(input);
-	AddModule(tex);
-	AddModule(audio);
-	AddModule(scene);
+	AddModule(win, true);
+	AddModule(input, true);
+	AddModule(tex, true);
+	AddModule(audio, true);
+	AddModule(scene, true);
 
 	// Render last to swap buffer
-	AddModule(render);
+	AddModule(render, true);
+
+	ptimer = new PerfTimer();
+	frameDuration = new PerfTimer();
 }
 
 // Destructor
@@ -48,13 +49,14 @@ App::~App()
 		item = item->prev;
 	}
 
-	modules.Clear();
+	modules.clear();
 }
 
-void App::AddModule(Module* module)
+void App::AddModule(Module* module, bool active)
 {
 	module->Init();
-	modules.Add(module);
+	modules.add(module);
+	module->active = active;
 }
 
 // Called before render is available
@@ -81,6 +83,7 @@ bool App::Awake()
 			ret = item->data->Awake(config.child(item->data->name.GetString()));
 			item = item->next;
 		}
+		maxFrameRate = configApp.child("frcap").attribute("value").as_int();
 	}
 
 	return ret;
@@ -89,6 +92,9 @@ bool App::Awake()
 // Called before the first frame
 bool App::Start()
 {
+	startupTime.Start();
+	lastSecFrameTime.Start();
+
 	bool ret = true;
 	ListItem<Module*>* item;
 	item = modules.start;
@@ -98,6 +104,9 @@ bool App::Start()
 		ret = item->data->Start();
 		item = item->next;
 	}
+
+	// Start so initial deltatime is around 0
+	frameDuration->Start();
 
 	return ret;
 }
@@ -150,12 +159,50 @@ bool App::LoadConfig()
 // ---------------------------------------------
 void App::PrepareUpdate()
 {
+	frameCount++;
+	lastSecFrameCount++;
+
+	// Calculate the dt: differential time since last frame
+	dt = frameDuration->ReadMs() / 1000.0f; // Convert to seconds
+	frameDuration->Start();
 }
 
 // ---------------------------------------------
 void App::FinishUpdate()
 {
-	// This is a good place to call Load / Save functions
+	float secondsSinceStartup = startupTime.ReadSec();
+
+	if (lastSecFrameTime.Read() > 1000) {
+		lastSecFrameTime.Start();
+		framesPerSecond = lastSecFrameCount;
+		lastSecFrameCount = 0;
+		averageFps = (averageFps + framesPerSecond) / 2;
+	}
+
+	static char title[256];
+	bool is_vsync = config.child("renderer").child("vsync").attribute("value").as_bool(true);
+	int lastFrameMs = frameDuration->ReadMs();
+
+	/*if (is_vsync == true) {
+		sprintf_s(title, 256, "FPS: %i Av.FPS: %.2f Last-frame MS: %i Vsync: on",
+			framesPerSecond, averageFps, lastFrameMs);
+	}
+	else {
+		sprintf_s(title, 256, "FPS: %i Av.FPS: %.2f Last-frame MS: %i Vsync: off",
+			framesPerSecond, averageFps, lastFrameMs);
+	}*/
+
+	//Use SDL_Delay to make sure you get your capped framerate
+	float delay = float(maxFrameRate) - frameDuration->ReadMs();
+	//LOG("F: %f Delay:%f", frameDuration->ReadMs(), delay);
+
+	//Measure accurately the amount of time SDL_Delay() actually waits compared to what was expected
+	PerfTimer* delayt = new PerfTimer();
+	delayt->Start();
+	if (maxFrameRate > 0 && delay > 0) SDL_Delay(delay);
+	//LOG("Expected %f milliseconds and the real delay is % f", delay, delayt->ReadMs());
+
+	//app->win->SetTitle(title);
 }
 
 // Call modules before each loop iteration
@@ -176,6 +223,9 @@ bool App::PreUpdate()
 
 		ret = item->data->PreUpdate();
 	}
+
+	if (app->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
+		debug = !debug;
 
 	return ret;
 }

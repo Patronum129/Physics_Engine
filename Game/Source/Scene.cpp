@@ -23,7 +23,7 @@ bool Scene::Awake()
 {
 	LOG("Loading Scene");
 	bool ret = true;
-
+	
 	return ret;
 }
 
@@ -56,7 +56,6 @@ bool Scene::Update(float dt)
 	if(app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		app->render->camera.x += 1;
 
-	app->render->DrawTexture(img, 380, 100);
 
 	return true;
 }
@@ -65,6 +64,8 @@ bool Scene::Update(float dt)
 bool Scene::PostUpdate()
 {
 	bool ret = true;
+
+	app->render->DrawTexture(img, 0, 0);
 
 	if(app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 		ret = false;
@@ -78,4 +79,26 @@ bool Scene::CleanUp()
 	LOG("Freeing scene");
 
 	return true;
+}
+
+void Scene::Activate()
+{
+	Module::Activate();
+
+	//app->physics->Activate();
+	//app->playerModule->Activate();
+	//app->map->Activate();
+	//app->enemies->Activate();
+
+	//InitMapLevel();
+}
+
+void Scene::Deactivate()
+{
+	Module::Deactivate();
+
+	//app->playerModule->Deactivate();
+	//app->map->Deactivate();
+	//app->physics->Deactivate();
+	//app->enemies->Deactivate();
 }

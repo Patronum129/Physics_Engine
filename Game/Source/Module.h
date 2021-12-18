@@ -6,6 +6,7 @@
 #include "PugiXml/src/pugixml.hpp"
 
 class App;
+class PhysicBody;
 
 class Module
 {
@@ -56,11 +57,45 @@ public:
 		return true;
 	}
 
+	virtual void Activate() {
+		active = true;
+	}
+
+	// Called to deactivate module
+	virtual void Deactivate() {
+		active = false;
+	}
+
+	// Called on two bodies collision
+	virtual void OnCollision(PhysicBody* bodyA, PhysicBody* bodyB)
+	{
+	}
 public:
 
 	SString name;
 	bool active;
 
+	void Enable() {
+		if (!isEnabled)
+		{
+			isEnabled = true;
+			Start();
+		}
+	}
+
+	// Switches isEnabled and calls CleanUp() method
+	void Disable() {
+		if (isEnabled)
+		{
+			isEnabled = false;
+			CleanUp();
+		}
+	}
+
+	inline bool IsEnabled() const { return isEnabled; }
+
+private:
+	bool isEnabled = true;
 };
 
 #endif // __MODULE_H__

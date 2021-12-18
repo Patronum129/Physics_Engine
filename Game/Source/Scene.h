@@ -32,6 +32,12 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
+	// Called to activate module
+	void Activate();
+
+	// called to deactivate module
+	void Deactivate();
+
 private:
 	SDL_Texture* img;
 };

@@ -3,6 +3,8 @@
 
 #include "Module.h"
 #include "List.h"
+#include "PerfTimer.h"
+#include "Timer.h"
 
 #include "PugiXml/src/pugixml.hpp"
 
@@ -37,7 +39,7 @@ public:
 	bool CleanUp();
 
 	// Add a new module to handle
-	void AddModule(Module* module);
+	void AddModule(Module* module, bool active);
 
 	// Exposing some properties for reading
 	int GetArgc() const;
@@ -45,6 +47,7 @@ public:
 	const char* GetTitle() const;
 	const char* GetOrganization() const;
 
+	bool IsDebugMode() { return debug; }
 private:
 
 	// Load config file
@@ -84,15 +87,27 @@ private:
 
 	List<Module *> modules;
 
-	// TODO 2: Create new variables from pugui namespace:
-	// a xml_document to store the config file and
-	// two xml_node to read specific branches of the xml
 	pugi::xml_document configFile;
 	pugi::xml_node config;
 	pugi::xml_node configApp;
 
-	uint frames;
-	float dt;
+	PerfTimer* ptimer;
+	PerfTimer* frameDuration;
+
+	Timer startupTime;
+	Timer frameTime;
+	Timer lastSecFrameTime;
+
+	uint64 frameCount = 0;
+	uint32 framesPerSecond = 0;
+	uint32 lastSecFrameCount = 0;
+
+	float averageFps = 0.0f;
+	float dt = 0.0f;
+
+	bool debug;
+
+	uint32 maxFrameRate = 0;
 };
 
 extern App* app;
