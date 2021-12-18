@@ -1,37 +1,96 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(505,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(499,5): warning MSB8004: El directorio Output no termina con una barra diagonal final. Esta instancia de compilación agregará la barra diagonal porque es necesaria para que se pueda evaluar correctamente el directorio Output.
+  Main.cpp
   App.cpp
-D:\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': macro redefinition
-D:\Physics_Engine\Game\Source\Globals.h(5): message : see previous definition of 'LOG'
-D:\Physics_Engine\Game\Source\App.cpp(166,31): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\Physics_Engine\Game\Source\App.cpp(184,18): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-D:\Physics_Engine\Game\Source\App.cpp(196,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\Physics_Engine\Game\Source\App.cpp(202,47): warning C4244: 'argument': conversion from 'float' to 'Uint32', possible loss of data
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': redefinición de macro
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Globals.h(5): message : vea la definición anterior de 'LOG'
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\App.cpp(169,31): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\App.cpp(187,18): warning C4244: 'inicializando': conversión de 'double' a 'int'; posible pérdida de datos
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\App.cpp(199,14): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\App.cpp(205,47): warning C4244: 'argumento': conversión de 'float' a 'Uint32'; posible pérdida de datos
   Audio.cpp
   Input.cpp
-  Main.cpp
-  Render.cpp
-D:\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': macro redefinition
-D:\Physics_Engine\Game\Source\Globals.h(5): message : see previous definition of 'LOG'
+  Map.cpp
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': redefinición de macro
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Globals.h(5): message : vea la definición anterior de 'LOG'
+  PerfTimer.cpp
+  PhysicBody.cpp
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicBody.h(153,10): warning C4244: 'return': conversión de 'float' a 'int'; posible pérdida de datos
+  PhysicWorld.cpp
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicBody.h(153,10): warning C4244: 'return': conversión de 'float' a 'int'; posible pérdida de datos
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(16,20): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(41,93): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(51,21): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(113,20): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(126,20): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(166,21): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(180,20): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(206,17): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(215,21): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(236,21): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(280,21): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(298,20): warning C4018: '<': no coinciden signed/unsigned
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(253,8): warning C4101: 'height': variable local sin referencia
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(254,8): warning C4101: 'width': variable local sin referencia
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Point.h(231,14): warning C4244: 'return': conversión de 'double' a 'TYPE'; posible pérdida de datos
+          with
+          [
+              TYPE=float
+          ]
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Point.h(230): message : al compilar la función del miembro clase plantilla "TYPE Point<TYPE>::magnitude(void)"
+          with
+          [
+              TYPE=float
+          ]
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(270): message : Vea la referencia a la creación de una instancia de la función plantilla "TYPE Point<TYPE>::magnitude(void)" que se está compilando
+          with
+          [
+              TYPE=float
+          ]
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicBody.h(22): message : Vea la referencia a la creación de una instancia de clase plantilla "Point<float>" que se está compilando
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Point.h(197,11): warning C4244: '=': conversión de 'double' a 'TYPE'; posible pérdida de datos
+          with
+          [
+              TYPE=float
+          ]
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Point.h(194): message : al compilar la función del miembro clase plantilla "TYPE Point<TYPE>::Module(void)"
+          with
+          [
+              TYPE=float
+          ]
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(38): message : Vea la referencia a la creación de una instancia de la función plantilla "TYPE Point<TYPE>::Module(void)" que se está compilando
+          with
+          [
+              TYPE=float
+          ]
   Scene.cpp
-D:\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': macro redefinition
-D:\Physics_Engine\Game\Source\Globals.h(5): message : see previous definition of 'LOG'
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': redefinición de macro
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Globals.h(5): message : vea la definición anterior de 'LOG'
+  Render.cpp
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': redefinición de macro
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Globals.h(5): message : vea la definición anterior de 'LOG'
   Textures.cpp
-D:\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': macro redefinition
-D:\Physics_Engine\Game\Source\Globals.h(5): message : see previous definition of 'LOG'
-D:\Physics_Engine\Game\Source\List.h(118,1): warning C4150: deletion of pointer to incomplete type 'SDL_Texture'; no destructor called
-D:\Physics_Engine\Game\Source\Textures.h(8): message : see declaration of 'SDL_Texture'
-D:\Physics_Engine\Game\Source\List.h(85): message : while compiling class template member function 'bool List<SDL_Texture *>::del(ListItem<tdata> *)'
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': redefinición de macro
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Globals.h(5): message : vea la definición anterior de 'LOG'
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\List.h(118,1): warning C4150: eliminación de puntero a tipo 'SDL_Texture' incompleto; no se ha llamado a un destructor
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Textures.h(8): message : vea la declaración de 'SDL_Texture'
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\List.h(85): message : al compilar la función del miembro clase plantilla "bool List<SDL_Texture *>::del(ListItem<tdata> *)"
           with
           [
               tdata=SDL_Texture *
           ]
-D:\Physics_Engine\Game\Source\Textures.cpp(92): message : see reference to function template instantiation 'bool List<SDL_Texture *>::del(ListItem<tdata> *)' being compiled
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Textures.cpp(92): message : Vea la referencia a la creación de una instancia de la función plantilla "bool List<SDL_Texture *>::del(ListItem<tdata> *)" que se está compilando
           with
           [
               tdata=SDL_Texture *
           ]
-D:\Physics_Engine\Game\Source\Textures.h(37): message : see reference to class template instantiation 'List<SDL_Texture *>' being compiled
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\Textures.h(37): message : Vea la referencia a la creación de una instancia de clase plantilla "List<SDL_Texture *>" que se está compilando
+  Timer.cpp
   Window.cpp
-  Generating Code...
-  Game.vcxproj -> D:\Physics_Engine\Build\Debug\Game.exe
-  已复制         1 个文件。
+  Log.cpp
+  pugixml.cpp
+  Generando código...
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(245): warning C4715: 'PhysWorld::CircleColCircle': no todas las rutas de acceso de control devuelven un valor
+C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Game\Source\PhysicWorld.cpp(538): warning C4715: 'PhysWorld::submergedVolume': no todas las rutas de acceso de control devuelven un valor
+  LINK : no se encontró C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Build\Debug\Game.exe o no lo generó el último vínculo incremental; ejecutando vínculo completo
+  Game.vcxproj -> C:\Users\guerr\OneDrive\Documentos\GitHub\Physics_Engine\Build\Debug\Game.exe
+          1 archivo(s) copiado(s).
