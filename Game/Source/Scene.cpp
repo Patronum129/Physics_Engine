@@ -33,7 +33,7 @@ bool Scene::Start()
 {
 	// Load map
 	app->map->Load("map1.tmx");
-	img = app->tex->Load("Assets/Textures/arti.png");
+	img = app->tex->Load("Assets/Textures/map1.png");
 	app->audio->PlayMusic("Assets/Audio/Music/Retro_Platforming_David_Fesliyan.ogg");
 	return true;
 }
@@ -53,6 +53,7 @@ bool Scene::Update(float dt)
 		app->map->mapData.tileWidth, app->map->mapData.tileHeight,
 		app->map->mapData.tilesets.count());
 
+	/*
 	if(app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		app->render->camera.y -= 1;
 
@@ -64,7 +65,7 @@ bool Scene::Update(float dt)
 
 	if(app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		app->render->camera.x += 1;
-
+    */
 
 	return true;
 }
