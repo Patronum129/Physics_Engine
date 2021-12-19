@@ -49,6 +49,9 @@
     <ClCompile Include="Source\GameObject.cpp">
       <Filter>Source Files\Application</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Player.cpp">
+      <Filter>Source Files\Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Defs.h">
@@ -125,6 +128,9 @@
     </ClInclude>
     <ClInclude Include="Source\GameObject.h">
       <Filter>Header Files\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Player.h">
+      <Filter>Header Files\Module</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
