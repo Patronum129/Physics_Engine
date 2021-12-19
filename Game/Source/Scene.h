@@ -5,6 +5,15 @@
 #include "Globals.h"
 #include "List.h"
 #include "Animation.h"
+#include "Module.h"
+
+
+struct Player1 {
+	Animation idlePlayerAnim;
+	Animation jumpingPlayerAnim;
+	Animation walkingPlayerAnim;
+	Animation deathPlayerAnim;
+};
 
 class PhysicWorld;
 class PhysicBody;
@@ -47,6 +56,21 @@ public:
 	PhysicWorld* world;
 
 private:
+	SDL_Texture* playerTexture;
+
+	Player1* p;
+	Animation* currentAnim = nullptr;
+	Animation idlePlayerAnim, walkingPlayerAnim, jumpingPlayerAnim, deathPlayerAnim;
+	enum State
+	{
+		IDLE,
+		WALK,
+		JUMP,
+		DEATH
+	};
+	State pState;
+
+
 	SDL_Texture* img;
 
 	int playerWidth;

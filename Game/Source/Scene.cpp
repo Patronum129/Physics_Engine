@@ -37,6 +37,34 @@ bool Scene::Start()
 	//app->audio->PlayMusic("Assets/Audio/Music/Retro_Platforming_David_Fesliyan.ogg");
 	app->render->camera.x = app->render->camera.y = 0;
 
+	p = new Player1;
+	pState = IDLE;
+
+	//Idle anim
+	p->idlePlayerAnim.PushBack({ 28, 19, 50, 50 });
+	p->idlePlayerAnim.PushBack({ 109, 20, 50, 50 });
+	p->idlePlayerAnim.PushBack({ 190, 19, 50, 50 });
+	p->idlePlayerAnim.PushBack({ 269, 18, 50, 50 });
+	p->idlePlayerAnim.loop = true;
+	p->idlePlayerAnim.mustFlip = true;
+	p->idlePlayerAnim.speed = 0.01f;
+	//Walking anim
+	p->walkingPlayerAnim.PushBack({ 29, 82, 50, 50 });
+	p->walkingPlayerAnim.PushBack({ 108, 81, 50, 50 });
+	p->walkingPlayerAnim.PushBack({ 189, 82, 50, 50 });
+	p->walkingPlayerAnim.PushBack({ 271, 81, 50, 50 });
+	p->walkingPlayerAnim.loop = true;
+	p->walkingPlayerAnim.mustFlip = true;
+	p->walkingPlayerAnim.speed = 0.1f;
+	//Jump anim
+	p->jumpingPlayerAnim.PushBack({ 431, 80, 50, 50 });
+	p->jumpingPlayerAnim.PushBack({ 428, 16, 50, 50 });
+	p->jumpingPlayerAnim.loop = true;
+	p->walkingPlayerAnim.mustFlip = true;
+	p->jumpingPlayerAnim.speed = 0.1f;
+
+	playerTexture = app->tex->Load("Assets/textures/Mage80x64.png");
+
 	world = new PhysicWorld({ 0,10 });
 
 	walls[0] = new PhysicBody({ 0,0 }, BodyType::STATIC, 1280, 5);
