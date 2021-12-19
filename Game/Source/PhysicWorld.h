@@ -1,14 +1,5 @@
 #pragma once
 #include "PhysicBody.h"
-#include "List.h"
-
-
-enum COL_TYPE
-{
-	NONE = -1,
-	COLLISION,
-	TRIGGER
-};
 
 class PhysWorld
 {
@@ -17,27 +8,27 @@ public:
 
 	~PhysWorld();
 
-	void Update(float dt);
+	void Update(float simulationTime);
 
 	bool CheckCollision(PhysicBody* body);
 
 	void AddPhysicBody(PhysicBody* body);
 
-	void DelPhysicBody(PhysicBody* body);
+	void DeleteRigidBody(PhysicBody* body);
 
-	COL_TYPE BoxColBox(PhysicBody& b1, PhysicBody& b2, bool trigger = false);
+	void BoxColBox(PhysicBody& b1, PhysicBody& b2, bool trigger = false);
 
-	COL_TYPE CircleColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger = false);
+	void CircleColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger = false);
 
-	COL_TYPE BoxColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger = false);
+	void BoxColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger = false);
 
 	void ResolveColForce(PhysicBody& b1, PhysicBody& b2, fPoint colPoint);
 
 	float submergedVolume(PhysicBody* body, PhysicBody* water);
 
-	void SetairForce(fPoint airforce)
+	void SetWind(fPoint windforce)
 	{
-		air = airforce;
+		air = windforce;
 	}
 
 	void SetGravity(fPoint gravityforce)
@@ -45,7 +36,7 @@ public:
 		gravity = gravityforce;
 	}
 
-	fPoint GetAirForce()
+	fPoint GetWind()
 	{
 		return air;
 	}
@@ -55,21 +46,36 @@ public:
 		return gravity;
 	}
 
+	// Detect collision point in 2 shapes
 	fPoint CollisionPoint(PhysicBody& b1, PhysicBody& b2);
 
+	// Dectet center of shape -> collision point(any point) vector
 	fPoint CollisionDir(PhysicBody& b1, fPoint colPoint);
 
-	void ResolveClamping(PhysicBody& b1, PhysicBody& b2);
+	// Resolve clamping case
+	void ResolveClipping(PhysicBody& b1, PhysicBody& b2);
+
+	/// <summary>
+	/// Check intersectionPoint of 2 lines
+	/// </summary>
+	/// <param name="p1">init of line 1</param>
+	/// <param name="p2">end of line 1</param>
+	/// <param name="p3">init of line 2</param>
+	/// <param name="p4">end of line 2</param>
+	/// <returns></returns>
+	fPoint IntersectionPoint(fPoint p1, fPoint p2, fPoint p3, fPoint p4);
 
 private:
 
 	fPoint gravity;
-    float density = 1.0f;
-	fPoint air = { 0,0 };
+
+	float density = 1.0f;
+
+	fPoint air = { 0, 0 };
+
 	int resolveColForce = 5;
 
 public:
 
 	List<PhysicBody*> physicBodies;
 };
-

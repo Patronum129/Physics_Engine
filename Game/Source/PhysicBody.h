@@ -2,34 +2,42 @@
 #include "Point.h"
 #include "List.h"
 
-enum class ShapeType
-{
-	CIRCLE,
-	RECTANGLE,
-};
-
-enum BodyType
+enum class BodyType
 {
 	STATIC,
 	DYNAMIC,
 	KINEMATIC,
-	WATER,
+	WATER
+};
+
+enum class ShapeType
+{
+	CIRCLE,
+	RECT
+};
+
+enum class COL_TYPE
+{
+	NONE = 0,
+	COLLISION,
+	TRIGGER
 };
 
 class PhysicBody
 {
 private:
+	// Position
 	fPoint position = { 0.0, 0.0 };
 	fPoint lastPosition = { 0.0,0.0 };
 
+	// Properties
 	float restitution = 0.0f;
 	float friction = 0.0f;
 	float coefficientDrag = 0.0f;
 	float hydrodynamicDrag = 0.3f;
 	float mass = 1.0f;
-
 	fPoint velocity = { 0.0f, 0.0f };
-	fPoint acceleration = { 0.0f, 0.0f };
+	fPoint acceleration = { 0.0, 0.0 };
 	float rotation = 0.0f;
 	float gravityScale = 1.0f;
 	float surface = 1.0f;
@@ -37,10 +45,12 @@ private:
 	float height = 1.0f;
 	float radius = 1.0f;
 
-	ShapeType shape = ShapeType::RECTANGLE;
-	BodyType type = STATIC;
+	// Tags
+	BodyType type = BodyType::STATIC;
+	ShapeType shape = ShapeType::RECT;
+	COL_TYPE colType = COL_TYPE::COLLISION;
 
-	float maxVelocity = 1000.0f;
+	float maximumVelocity = 1000.0f;
 
 	fPoint totalForce = { 0.0, 0.0 };
 	fPoint additionalForce = { 0.0, 0.0 };
@@ -51,9 +61,9 @@ public:
 
 	~PhysicBody();
 
-	PhysicBody(fPoint pos, float width, float height, BodyType type);
+	PhysicBody(fPoint pos, BodyType type, float width, float height, COL_TYPE colType = COL_TYPE::COLLISION);
 
-	PhysicBody(fPoint pos, float radius, BodyType type);
+	PhysicBody(fPoint pos, BodyType type, float radius, COL_TYPE colType = COL_TYPE::COLLISION);
 
 	PhysicBody(PhysicBody& copy);
 
@@ -63,8 +73,37 @@ public:
 
 	void OnCollisionLeave(PhysicBody* col);
 
+	void OnTriggerEnter(PhysicBody* col);
+
+	void OnTriggerStay(PhysicBody* col);
+
+	void OnTriggerExit(PhysicBody* col);
+
 	void AddForceToCenter(fPoint force);
 
+	// Check if point is contain in this body shape
+	bool Contains(fPoint pos)
+	{
+		if (shape == ShapeType::RECT)
+		{
+			if (pos.x >= position.x - width / 2 && pos.x <= position.x + width / 2 &&
+				pos.y >= position.y - height / 2 && pos.y <= position.y + height / 2)
+			{
+				return true;
+			}
+		}
+		else
+		{
+			if (sqrt(pow(position.x - pos.x, 2) + pow(position.y - pos.y, 2)) <= radius)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	// Get & Set
 	fPoint GetPosition()
 	{
 		return position;
@@ -73,6 +112,7 @@ public:
 	{
 		this->position = pos;
 	}
+
 	float GetRestitution()
 	{
 		return restitution;
@@ -124,8 +164,8 @@ public:
 	}
 	void SetLinearVelocity(fPoint velocity)
 	{
-		velocity.x > maxVelocity ? maxVelocity : velocity.x < -maxVelocity ? -maxVelocity : velocity.x;
-		velocity.y > maxVelocity ? maxVelocity : velocity.y < -maxVelocity ? -maxVelocity : velocity.y;
+		velocity.x > maximumVelocity ? maximumVelocity : velocity.x < -maximumVelocity ? -maximumVelocity : velocity.x;
+		velocity.y > maximumVelocity ? maximumVelocity : velocity.y < -maximumVelocity ? -maximumVelocity : velocity.y;
 
 		this->velocity = velocity;
 	}
@@ -134,7 +174,6 @@ public:
 	{
 		this->gravityScale = gravityScale;
 	}
-
 	float GetGravityScale()
 	{
 		return gravityScale;
@@ -148,36 +187,14 @@ public:
 	{
 		this->rotation = rotation;
 	}
-	int GetRadius()
+
+	float GetRadius()
 	{
 		return radius;
 	}
-
-	bool Contains(fPoint pos)
-	{
-		if (shape == ShapeType::RECTANGLE)
-		{
-			if (pos.x >= position.x - width / 2 && pos.x <= position.x + width / 2 &&
-				pos.y >= position.y - height / 2 && pos.y <= position.y + height / 2)
-			{
-				return true;
-			}
-		}
-		else
-		{
-			if (sqrt(pow(position.x - pos.x, 2) + pow(position.y - pos.y, 2)) <= radius)
-			{
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 private:
 
 	void ResetForces();
 
 	friend class PhysWorld;
 };
-

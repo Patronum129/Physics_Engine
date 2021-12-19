@@ -6,10 +6,12 @@
 #include "Window.h"
 #include "Scene.h"
 #include "Map.h"
+#include "PhysicWorld.h"
 
 #include "Defs.h"
 #include "Log.h"
 
+iPoint position;
 Scene::Scene() : Module()
 {
 	name.Create("scene");
@@ -35,7 +37,32 @@ bool Scene::Start()
 	//app->map->Load("map1.tmx");
 	//img = app->tex->Load("Assets/Textures/map1.png");
 	//app->audio->PlayMusic("Assets/Audio/Music/Retro_Platforming_David_Fesliyan.ogg");
+	app->render->camera.x = app->render->camera.y = 0;
 
+	world = new PhysWorld({ 0, 10 });
+
+	body = new PhysicBody({ 200, 600 }, BodyType::STATIC, rect.w, rect.h, COL_TYPE::COLLISION);
+
+	body2 = new PhysicBody({ 300, 240 }, BodyType::STATIC, rect2.w, rect2.h, COL_TYPE::COLLISION);
+
+	body3 = new PhysicBody({ 300, 200 }, BodyType::DYNAMIC, 2, COL_TYPE::COLLISION);
+
+	//body3->SetMass(20);
+	body3->SetRestitution(0.7f);
+	body3->SetDragCoeficient(0.01f);
+	body3->SetGravityScale(8);
+	body3->SetHydrodynamicDragCoeficient(0.3f);
+	body3->SetFriction(1.0f);
+
+	//body4 = new RigidBody({ 445, 500 }, RigidBodyType::STATIC, 10);
+
+	//body4->SetGravityScale(2.0f);
+
+	world->AddPhysicBody(body);
+
+	world->AddPhysicBody(body2);
+
+	world->AddPhysicBody(body3);
 	return true;
 }
 
@@ -54,6 +81,40 @@ bool Scene::Update(float dt)
 		app->map->mapData.tileWidth, app->map->mapData.tileHeight,
 		app->map->mapData.tilesets.count());
 
+	world->Update(1.0 / 60);
+
+	if (app->input->GetKey(SDL_SCANCODE_C) == KEY_REPEAT)
+	{
+		world->Update(1.0 / 60);
+	}
+	if (app->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
+	{
+		world->Update(1.0 / 60);
+	}
+
+	if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
+	{
+		body3->AddForceToCenter({ 0, -200 });
+		//body3->SetLinearVelocity({ body3->GetLinearVelocity().x,-200 });
+	}
+
+	if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+	{
+		body3->AddForceToCenter({ -200, 0 });
+		//body3->SetLinearVelocity({ -200,0 });
+	}
+
+	if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+	{
+		body3->AddForceToCenter({ 200, 0 });
+		//body3->SetLinearVelocity({ 200,0 });
+	}
+
+	if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
+	{
+		body3->AddForceToCenter({ 0, 200 });
+		//body3->SetLinearVelocity({ 0,200 });
+	}
 	return true;
 }
 
@@ -63,6 +124,18 @@ bool Scene::PostUpdate()
 	bool ret = true;
 
 	app->render->DrawTexture(img, 0, 0);
+
+	rect.x = body->GetPosition().x;
+	rect.y = body->GetPosition().y;
+
+	app->render->DrawRectangle(rect, 0, 255, 0, 155);
+
+	rect2.x = body2->GetPosition().x;
+	rect2.y = body2->GetPosition().y;
+
+	app->render->DrawRectangle(rect2, 255, 255, 0, 255);
+
+	app->render->DrawCircle(body3->GetPosition().x, body3->GetPosition().y, body3->GetRadius(), 255, 0, 0);
 
 	if(app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 		ret = false;
@@ -74,6 +147,7 @@ bool Scene::PostUpdate()
 bool Scene::CleanUp()
 {
 	LOG("Freeing scene");
+	RELEASE(world);
 
 	return true;
 }
@@ -118,85 +192,4 @@ void Scene::InitMapLevel()
 			break;
 		}
 	}
-
-	int tileWidth = app->map->mapData.tileWidth;
-	int tileHeight = app->map->mapData.tileHeight;
-
-
-	//for (int y = 0; y < collisionLayer->height; y++)
-	//{
-	//	for (int x = 0; x < collisionLayer->width; x++)
-	//	{
-	//		ColliderLayerType colType = (ColliderLayerType)collisionLayer->Get(x, y);
-
-	//		switch (colType)
-	//		{
-	//		case ColliderLayerType::SPAWN:
-	//			if (!fromGameSaved)
-	//			{
-	//				app->playerModule->SetPosition(x * tileWidth, y * tileHeight - tileHeight / 2);
-	//				app->playerModule->playerscore = 0;
-	//			}
-	//			else
-	//			{
-	//				app->playerModule->SetPosition(playerPosition.x, playerPosition.y);
-	//				app->playerModule->SetState(playerState);
-	//			}
-	//			break;
-	//		case ColliderLayerType::END:
-	//			pbody = app->physics->CreateRectangle(x * tileWidth + tileWidth / 2, y * tileHeight + tileHeight / 2, tileWidth, tileHeight, false);
-	//			pbody->bodyType = PhysBodyType::END;
-	//			break;
-	//		case ColliderLayerType::NORMAL:
-	//			pbody = app->physics->CreateRectangle(x * tileWidth + tileWidth / 2, y * tileHeight + tileHeight / 2, tileWidth, tileHeight, false);
-	//			pbody->bodyType = PhysBodyType::GROUND;
-	//			break;
-	//		case ColliderLayerType::SPIKE:
-	//			pbody = app->physics->CreateRectangle(x * tileWidth + tileWidth / 2, y * tileHeight + tileHeight / 2 + 3, tileWidth, tileHeight - 6, false);
-	//			pbody->bodyType = PhysBodyType::SPIKES;
-	//			break;
-	//		case ColliderLayerType::PLATFORM:
-	//			pbody = app->physics->CreateRectangle(x * tileWidth + tileWidth / 2, y * tileHeight + tileHeight / 4, tileWidth, tileHeight / 2, false);
-	//			pbody->bodyType = PhysBodyType::PLATFORM;
-	//			break;
-	//		}
-	//	}
-	//}
-
-	//// Spawn enemies
-	//if (!fromGameSaved) {
-	//	uint groupCount = mapData->objectGroups.Count();
-
-	//	ObjectGroup* enemyGroup = NULL;
-
-	//	for (uint i = 0; i < groupCount; i++) {
-	//		if (mapData->objectGroups[i]->name == "Entities") {
-	//			enemyGroup = mapData->objectGroups[i];
-	//			break;
-	//		}
-	//	}
-
-	//	if (enemyGroup) {
-	//		uint enemyCount = enemyGroup->objects.Count();
-
-	//		for (uint i = 0; i < enemyCount; i++) {
-	//			Object* obj = enemyGroup->objects[i];
-
-	//			iPoint position = { obj->x, obj->y };
-
-	//			app->enemies->AddEntity(obj->id, (EntityModule::EntityType)obj->type, position);
-	//		}
-	//	}
-	//}
-	//else {
-	//	pugi::xml_document saveFile;
-	//	pugi::xml_parse_result result = saveFile.load_file("save_game.xml");
-
-	//	if (result != NULL)
-	//	{
-	//		pugi::xml_node save_node = saveFile.child("game_state");
-
-	//		app->enemies->LoadEntities(save_node.child("entities"));
-	//	}
-	//}
 }

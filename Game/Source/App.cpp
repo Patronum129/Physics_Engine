@@ -24,6 +24,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	scene = new Scene();
 	map = new Map();
 
+
 	// Ordered for awake / Start / Update
 	// Reverse order of CleanUp
 	AddModule(win, true);

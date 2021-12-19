@@ -2,9 +2,32 @@
 #define __SCENE_H__
 
 #include "Module.h"
+#include "PhysicBody.h"
+#include "PhysicWorld.h"
 
 struct SDL_Texture;
 
+class PhysicBody;
+class PhysWorld;
+
+#define BOUNCER_TIME 200
+
+struct Bouncer
+{
+	Bouncer() : texture(NULL), hit_timer(0), fx(0)
+	{}
+
+	SDL_Texture* texture;
+	Uint32 hit_timer;
+	uint fx;
+};
+
+enum lightTypes
+{
+	tiny,
+	medium,
+	big
+};
 class Scene : public Module
 {
 public:
@@ -41,6 +64,17 @@ public:
 	void InitMapLevel();
 private:
 	SDL_Texture* img;
+
+public:
+	SDL_Rect rect = { 10,10,500,500 };
+	SDL_Rect rect2 = { 10,10,20,20 };
+
+	PhysicBody* body;
+	PhysicBody* body2;
+	PhysicBody* body3;
+	PhysicBody* body4;
+
+	PhysWorld* world;
 };
 
 #endif // __SCENE_H__

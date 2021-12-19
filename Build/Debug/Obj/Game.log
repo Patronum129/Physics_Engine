@@ -1,14 +1,3 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(505,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  App.cpp
-D:\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': macro redefinition
-D:\Physics_Engine\Game\Source\Globals.h(5): message : see previous definition of 'LOG'
-D:\Physics_Engine\Game\Source\App.cpp(169,31): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\Physics_Engine\Game\Source\App.cpp(187,18): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-D:\Physics_Engine\Game\Source\App.cpp(199,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\Physics_Engine\Game\Source\App.cpp(205,47): warning C4244: 'argument': conversion from 'float' to 'Uint32', possible loss of data
-  Scene.cpp
-D:\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': macro redefinition
-D:\Physics_Engine\Game\Source\Globals.h(5): message : see previous definition of 'LOG'
-  Generating Code...
   Game.vcxproj -> D:\Physics_Engine\Build\Debug\Game.exe
   已复制         1 个文件。
