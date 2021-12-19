@@ -120,6 +120,9 @@
     <ClInclude Include="Source\Map.h">
       <Filter>Header Files\Module</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Animation.h">
+      <Filter>Header Files\Module</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="External">
