@@ -46,9 +46,6 @@
     <ClCompile Include="Source\Map.cpp">
       <Filter>Source Files\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="Source\GameObject.cpp">
-      <Filter>Source Files\Application</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Defs.h">
@@ -123,8 +120,8 @@
     <ClInclude Include="Source\Map.h">
       <Filter>Header Files\Module</Filter>
     </ClInclude>
-    <ClInclude Include="Source\GameObject.h">
-      <Filter>Header Files\Application</Filter>
+    <ClInclude Include="Source\Animation.h">
+      <Filter>Header Files\Module</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

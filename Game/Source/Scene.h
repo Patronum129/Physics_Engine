@@ -3,9 +3,8 @@
 
 #include "App.h"
 #include "Globals.h"
-#include "GameObject.h"
 #include "List.h"
-struct SDL_Texture;
+#include "Animation.h"
 
 class PhysicWorld;
 class PhysicBody;
@@ -13,8 +12,6 @@ class PhysicBody;
 class Scene : public Module
 {
 protected:
-
-	int ID;
 
 	App* _app;
 
@@ -32,7 +29,6 @@ public:
 	// Called before the first frame
 	bool Start();
 
-	void InitScene();
 	// Called before all Updates
 	bool PreUpdate();
 
@@ -45,37 +41,29 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
-	void DestroyGameObject(GameObject* gameObject);
-
-	int getID()
-	{
-		return ID;
-	}
-
-	int lastID = 0;
-
-	int playerX;
-	int playerY;
-
-	SDL_Texture* bg[4];
-
-	SDL_Rect rect = { 10,10,10,10 };
-	SDL_Rect rect2 = { 10,10,10,10 };
-	SDL_Rect rect3 = { 10,10,10,10 };
-	PhysicBody* body;
-	PhysicBody* body2;
-
 	PhysicBody* walls[3];
 	PhysicBody* floor[6];
 
 	PhysicWorld* world;
 
-	GameObject* testGO = nullptr;
-	GameObject* testGO2 = nullptr;
-
-	List<GameObject*> gameObjects;
 private:
 	SDL_Texture* img;
+
+	int playerWidth;
+	int playerHeight;
+
+	bool fx_on;
+	float playerJumpForce;
+
+	SDL_RendererFlip playerFlip;
+
+	SDL_Texture* playerTex;
+	iPoint position;
+
+	int healthFont = -1;
+	char livesText[10] = { "\0" };
+
+	PhysicBody* playerBody;
 };
 
 #endif // __SCENE_H__

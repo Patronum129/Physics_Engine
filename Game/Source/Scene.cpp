@@ -36,9 +36,8 @@ bool Scene::Start()
 	img = app->tex->Load("Assets/Textures/map1.png");
 	//app->audio->PlayMusic("Assets/Audio/Music/Retro_Platforming_David_Fesliyan.ogg");
 	app->render->camera.x = app->render->camera.y = 0;
-	world = new PhysicWorld({ 0,10 });
 
-	InitScene();
+	world = new PhysicWorld({ 0,10 });
 
 	walls[0] = new PhysicBody({ 0,0 }, BodyType::STATIC, 1280, 5);
 	walls[1] = new PhysicBody({ 0,0 }, BodyType::STATIC, 5, 720);
@@ -51,50 +50,20 @@ bool Scene::Start()
 	floor[4] = new PhysicBody({ 384,544 }, BodyType::STATIC, 32, 32);
 	floor[5] = new PhysicBody({ 928,416 }, BodyType::STATIC, 32, 32);
 
+	
+
 	for (int i = 0; i < 3; i++)
 	{
 		world->AddPhysicBody(walls[i]);
 	}
 
-	for (int i = 0; i < 3; i++)
-	{
-		world->AddPhysicBody(floor[i]);
-	}
-
 	return true;
-}
-
-void Scene::InitScene()
-{
-	// Obstacles
-	GameObject* g = new GameObject("wall", "Wall", _app);
-	// +8 = offset, porque pivot de b2Body es el centro, y de tectura es izquierda superior.
-	g->rBody = new PhysicBody({ 100,100 }, BodyType::STATIC, 16, 16);
-	world->AddPhysicBody(g->rBody);
-	gameObjects.add(g);
-
-	GameObject* j = new GameObject("floor", "floor", _app);
-	j->rBody = new PhysicBody({ 100,100 }, BodyType::STATIC, 16, 16);
-	world->AddPhysicBody(j->rBody);
-	gameObjects.add(j);
 }
 
 // Called each loop iteration
 bool Scene::PreUpdate()
 {
-	for (int i = 0; i < gameObjects.count(); i++)
-	{
-		gameObjects[i]->PreUpdate();
-		if (gameObjects[i]->pendingToDelete == true)
-		{
-			if (gameObjects[i]->rBody != nullptr)
-			{
-				world->DelPhysicBody(gameObjects[i]->rBody);
-			}
-			gameObjects[i]->CleanUp();
-			gameObjects.del(gameObjects.At(gameObjects.find(gameObjects[i])));
-		}
-	}
+	
 	return true;
 }
 
@@ -102,10 +71,7 @@ bool Scene::PreUpdate()
 bool Scene::Update(float dt)
 {
 	world->Update(1.0 / 60);
-	for (int i = 0; i < gameObjects.count(); i++)
-	{
-		gameObjects[i]->Update();
-	}
+
 	return true;
 }
 
@@ -115,11 +81,6 @@ bool Scene::PostUpdate()
 	bool ret = true;
 
 	app->render->DrawTexture(img, 0, 0);
-
-	for (int i = 0; i < gameObjects.count(); i++)
-	{
-		gameObjects[i]->PostUpdate();
-	}
 
 	app->render->DrawRectangle({ 0,0,1280,5 }, 255, 0, 0);
 	app->render->DrawRectangle({ 1275,0,5,720 }, 255, 0, 0);
@@ -142,15 +103,6 @@ bool Scene::CleanUp()
 {
 	LOG("Freeing scene");
 	RELEASE(world);
-	for (int i = 0; i < gameObjects.count(); i++)
-	{
-		if (gameObjects[i] != nullptr)
-		{
-			gameObjects[i]->CleanUp();
-		}
-	}
-
-	gameObjects.clear();
 
 	for (int i = 0; i < sceneTextures.count(); i++)
 	{
@@ -162,14 +114,4 @@ bool Scene::CleanUp()
 	}
 
 	return true;
-}
-
-void Scene::DestroyGameObject(GameObject* gameObject)
-{
-	int index = gameObjects.find(gameObject);
-
-	if (index >= 0)
-	{
-		gameObjects.del(gameObjects.At(index));
-	}
 }

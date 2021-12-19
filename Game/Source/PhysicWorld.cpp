@@ -24,7 +24,7 @@ void PhysicWorld::Update(float simulationTime)
 		//	gravity
 		if (gravityOn)
 		{
-			physicBodies[i]->AddForceToCenter(gravity * physicBodies[i]->gravityScale * physicBodies[i]->GetMass());
+			physicBodies[i]->AddForceToCenter(gravity * physicBodies[i]->gravityScale * physicBodies[i]->mass);
 		}
 
 		//	Drag	(0.5 * density * relative velocity square * surface * Drag coeficient)
@@ -36,14 +36,14 @@ void PhysicWorld::Update(float simulationTime)
 			float magnitudDrag;
 
 			// Calcular velocidad relativa entre viento y body
-			relativeVelocity.x = air.x - physicBodies[i]->GetLinearVelocity().x;
-			relativeVelocity.y = air.y - physicBodies[i]->GetLinearVelocity().y;
+			relativeVelocity.x = 0 - physicBodies[i]->GetLinearVelocity().x;
+			relativeVelocity.y = 0 - physicBodies[i]->GetLinearVelocity().y;
 
 			// Calcular el modulo de la velocidad relativa
 			relativeVelocityModule = relativeVelocity.Module();
 
 			// Calcular el magnitud del drag
-			magnitudDrag = 0.5f * density * physicBodies[i]->surface * pow(relativeVelocityModule, 2) * physicBodies[i]->GetDragCoeficient();
+			magnitudDrag = 0.5f * density * 1 * pow(relativeVelocityModule, 2) * physicBodies[i]->coefficientDrag;
 
 			fPoint nor = relativeVelocity.Normalize();
 
@@ -60,17 +60,11 @@ void PhysicWorld::Update(float simulationTime)
 		physicBodies[i]->acceleration = physicBodies[i]->totalForce / physicBodies[i]->mass;
 
 		// Check if collision Stay
-		for (int j = 0; j < physicBodies[i]->collisionList.count(); j++)
+		for (int j = 0; j < physicBodies[i]->colList.count(); j++)
 		{
-			// Trigger
-			if (physicBodies[i]->colType == COL_TYPE::TRIGGER || physicBodies[i]->collisionList[j]->colType == COL_TYPE::TRIGGER)
-			{
-				physicBodies[i]->OnTriggerStay(physicBodies[i]->collisionList[j]);
-			}
 			// Collision
-			else
-			{
-				if (physicBodies[i]->collisionList[j]->type == BodyType::WATER && buoyancyOn)
+			
+			if (physicBodies[i]->colList[j]->type == BodyType::WATER && buoyancyOn)
 				{
 					//Buoyancy (Density * gravity * area of the object flooded)
 					fPoint buoyancyForce;
@@ -81,43 +75,36 @@ void PhysicWorld::Update(float simulationTime)
 					float mod = gravity.Module();
 
 					// 1 = 100%
-					float submerge = submergedVolume(physicBodies[i], physicBodies[i]->collisionList[j]);
+					float submerge = 0.5;
 
 					//printf("%f\n", submerge);
 
 					// *2 = 200% para que pueda subir
-					magnitudbuoyancy = density * mod * submerge * 2 * physicBodies[i]->GetGravityScale();
+					magnitudbuoyancy = density * mod * submerge * 2 * physicBodies[i]->gravityScale;
 
 					buoyancyForce = direction * magnitudbuoyancy;
 
 					physicBodies[i]->AddForceToCenter(buoyancyForce);
 
 					// Calcular la fuerza de drag hidrodinamica
-					if (hydrioDragOn)
-					{
-						fPoint dragForce = (physicBodies[i]->velocity * -1) * physicBodies[i]->hydrodynamicDrag;
+				if (hydrioDragOn)
+				{
+					fPoint dragForce = (physicBodies[i]->velocity * -1) * physicBodies[i]->hydrodynamicDrag;
 
-						physicBodies[i]->AddForceToCenter(dragForce);
-					}
+					physicBodies[i]->AddForceToCenter(dragForce);
 				}
 				else
 				{
-					// Clipping case!!!
-					if (physicBodies[i]->colType == COL_TYPE::COLLISION && physicBodies[i]->collisionList[j]->type == BodyType::STATIC && clippingOn)
-					{
-						if (physicBodies[i]->collisionList[j]->Contains(physicBodies[i]->position))
-							ResolveClipping(*physicBodies[i], *physicBodies[i]->collisionList[j]);
-					}
 					//FUERZA DE FRICCIÓN
-					if (physicBodies[i]->collisionList[j]->type == BodyType::STATIC && frictioOn)
+					if (physicBodies[i]->colList[j]->type == BodyType::STATIC && frictioOn)
 					{
-						fPoint dragForce = (physicBodies[i]->GetLinearVelocity() * -1) * physicBodies[i]->GetFriction();
+						fPoint dragForce = (physicBodies[i]->GetLinearVelocity() * -1) * physicBodies[i]->friction;
 
 						physicBodies[i]->AddForceToCenter(dragForce);
 					}
 					//IMPEDIR QUE ENTRE DENTRO DE UN RIGIDBODY
-					fPoint colPoint = CollisionPoint(*physicBodies[i], *physicBodies[i]->collisionList[j]);
-					ResolveColForce(*physicBodies[i], *physicBodies[i]->collisionList[j], colPoint);
+					fPoint colPoint = CollisionPoint(*physicBodies[i], *physicBodies[i]->colList[j]);
+					ResolveColForce(*physicBodies[i], *physicBodies[i]->colList[j], colPoint);
 
 				}
 			}
@@ -188,56 +175,35 @@ void PhysicWorld::BoxColBox(PhysicBody& b1, PhysicBody& b2)
 		b1.position.y > b2.position.y + b2.height ||
 		b1.position.y + b1.height < b2.position.y)
 	{
-		for (int i = 0; i < b1.collisionList.count(); i++)
+		for (int i = 0; i < b1.colList.count(); i++)
 		{
 			// Collision Exit
-			if (physicBodies.find(b1.collisionList[i]) == physicBodies.find(&b2))
+			if (physicBodies.find(b1.colList[i]) == physicBodies.find(&b2))
 			{
-				if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
-				{
-					b1.OnCollisionExit(&b2);
-				}
-				else
-				{
-					b1.OnTriggerExit(&b2);
-				}
-
-				b1.collisionList.remove(b1.collisionList.At(b1.collisionList.find(&b2)));
+				b1.OnCollisionExit(&b2);
+				
+				b1.colList.remove(b1.colList.At(b1.colList.find(&b2)));
 				return;
 			}
 		}
 	}
 
 	// Collision case
-	for (int i = 0; i < b1.collisionList.count(); i++)
+	for (int i = 0; i < b1.colList.count(); i++)
 	{
 		// Collision stay
-		if (physicBodies.find(b1.collisionList[i]) == physicBodies.find(&b2))
+		if (physicBodies.find(b1.colList[i]) == physicBodies.find(&b2))
 		{
-			if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
-			{
-				b1.OnCollisionStay(&b2);
-				ResolveColForce(b1, b2, CollisionPoint(b1, b2));
-			}
-			else
-			{
-				b1.OnTriggerStay(&b2);
-			}
+			b1.OnCollisionStay(&b2);
+			ResolveColForce(b1, b2, CollisionPoint(b1, b2));
 			return;
 		}
 	}
 
 	// Collision Enter
-	if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
-	{
-		b1.OnCollisionEnter(&b2);
-		ResolveColForce(b1, b2, CollisionPoint(b1, b2));
-	}
-	else
-	{
-		b1.OnTriggerEnter(&b2);
-	}
-	b1.collisionList.add(&b2);
+	b1.OnCollisionEnter(&b2);
+	ResolveColForce(b1, b2, CollisionPoint(b1, b2));
+	b1.colList.add(&b2);
 
 	return;
 }
@@ -251,37 +217,23 @@ void PhysicWorld::CircleColCircle(PhysicBody& b1, PhysicBody& b2)
 	//Collision
 	if (distance <= b1.radius + b2.radius)
 	{
-		for (int i = 0; i < b1.collisionList.count(); i++)
+		for (int i = 0; i < b1.colList.count(); i++)
 		{
-			if (physicBodies.find(b1.collisionList[i]) == physicBodies.find(&b2))
+			if (physicBodies.find(b1.colList[i]) == physicBodies.find(&b2))
 			{
-				if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
-				{
-					b1.OnCollisionStay(&b2);
-					fPoint colPoint = CollisionPoint(b1, b2);
-					ResolveColForce(b1, b2, colPoint);
-				}
-				else
-				{
-					b1.OnTriggerStay(&b2);
-				}
+				b1.OnCollisionStay(&b2);
+				fPoint colPoint = CollisionPoint(b1, b2);
+				ResolveColForce(b1, b2, colPoint);
 
 				return;
 			}
 		}
 
-		b1.collisionList.add(&b2);
+		b1.colList.add(&b2);
 
-		if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
-		{
-			b1.OnCollisionEnter(&b2);
-			fPoint colPoint = CollisionPoint(b1, b2);
-			ResolveColForce(b1, b2, colPoint);
-		}
-		else
-		{
-			b1.OnTriggerEnter(&b2);
-		}
+		b1.OnCollisionEnter(&b2);
+		fPoint colPoint = CollisionPoint(b1, b2);
+		ResolveColForce(b1, b2, colPoint);
 
 		return;
 	}
@@ -289,20 +241,13 @@ void PhysicWorld::CircleColCircle(PhysicBody& b1, PhysicBody& b2)
 	//No Collision
 	if (distance > b1.radius + b2.radius)
 	{
-		for (int i = 0; i < b1.collisionList.count(); i++)
+		for (int i = 0; i < b1.colList.count(); i++)
 		{
-			if (physicBodies.find(b1.collisionList[i]) == physicBodies.find(&b2))
+			if (physicBodies.find(b1.colList[i]) == physicBodies.find(&b2))
 			{
-				if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
-				{
-					b1.OnCollisionExit(&b2);
-				}
-				else
-				{
-					b1.OnTriggerExit(&b2);
-				}
-
-				b1.collisionList.remove(b1.collisionList.At(b1.collisionList.find(&b2)));
+				b1.OnCollisionExit(&b2);
+				
+				b1.colList.remove(b1.colList.At(b1.colList.find(&b2)));
 
 				return;
 			}
@@ -336,67 +281,39 @@ void PhysicWorld::BoxColCircle(PhysicBody& b1, PhysicBody& b2)
 	distance = (colPoint - circ->position).magnitude();
 
 	// Collision case
-	if (distance <= circ->GetRadius())
+	if (distance <= circ->radius)
 	{
-		for (int i = 0; i < b1.collisionList.count(); i++)
+		for (int i = 0; i < b1.colList.count(); i++)
 		{
-			if (physicBodies.find(b1.collisionList[i]) == physicBodies.find(&b2))
+			if (physicBodies.find(b1.colList[i]) == physicBodies.find(&b2))
 			{
-				if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
-				{
-					b1.OnCollisionStay(&b2);
-					ResolveColForce(b1, b2, colPoint);
-					return;
-				}
-				else
-				{
-					b1.OnTriggerStay(&b2);
-					return;
-				}
+				b1.OnCollisionStay(&b2);
+				ResolveColForce(b1, b2, colPoint);
+				return;
 			}
 		}
 
-		b1.collisionList.add(&b2);
+		b1.colList.add(&b2);
 
-		if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
-		{
-			b1.OnCollisionEnter(&b2);
-			ResolveColForce(b1, b2, colPoint);
-		}
-		else
-		{
-			b1.OnTriggerEnter(&b2);
-		}
+		b1.OnCollisionEnter(&b2);
+		ResolveColForce(b1, b2, colPoint);
 		return;
 	}
 
 	// No collision case
-	for (int i = 0; i < b1.collisionList.count(); i++)
+	for (int i = 0; i < b1.colList.count(); i++)
 	{
-		if (physicBodies.find(b1.collisionList[i]) == physicBodies.find(&b2))
+		if (physicBodies.find(b1.colList[i]) == physicBodies.find(&b2))
 		{
-			if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
-			{
-				b1.OnCollisionExit(&b2);
-			}
-			else
-			{
-				b1.OnTriggerExit(&b2);
-			}
+			b1.OnCollisionExit(&b2);
 
-			b1.collisionList.remove(b1.collisionList.At(b1.collisionList.find(&b2)));
+			b1.colList.remove(b1.colList.At(b1.colList.find(&b2)));
 
 			return;
 		}
 	}
 }
 
-/// <summary>
-/// Just resolve Dynamic body && Static body
-/// </summary>
-/// <param name="b1"></param>
-/// <param name="b2"></param>
-/// <param name="colPoint"></param>
 void PhysicWorld::ResolveColForce(PhysicBody& b1, PhysicBody& b2, fPoint colPoint)
 {
 	PhysicBody* dinBody;
@@ -558,152 +475,4 @@ fPoint PhysicWorld::CollisionDir(PhysicBody& b1, fPoint colPoint)
 	dir = dir.Normalize();
 
 	return dir;
-}
-
-void PhysicWorld::ResolveClipping(PhysicBody& b1, PhysicBody& b2)
-{
-	PhysicBody* dinBody = nullptr;
-	PhysicBody* staticBody = nullptr;
-
-	if (b1.type == BodyType::DYNAMIC && b2.type == BodyType::STATIC)
-	{
-		dinBody = &b1;
-		staticBody = &b2;
-	}
-	else if (b2.type == BodyType::DYNAMIC && b1.type == BodyType::STATIC)
-	{
-		dinBody = &b2;
-		staticBody = &b1;
-	}
-
-	// Just resolve circle && rect clamping
-	if (dinBody->shape != ShapeType::CIRCLE || staticBody->shape != ShapeType::RECT)
-	{
-		printf("Can not resolve clamping");
-		return;
-	}
-
-	// calcular interseccion de linea de last position->position y static body
-	// circle trayector ray
-	fPoint p1 = dinBody->lastPosition;
-	fPoint p2 = dinBody->position;
-
-	// rect line 1
-	fPoint p3 = { staticBody->position.x - (staticBody->width / 2), staticBody->position.y - (staticBody->height / 2) };
-	fPoint p4 = p3;
-	p4.x += staticBody->width;
-
-	fPoint colPoint = IntersectionPoint(p1, p2, p3, p4);
-
-	if (colPoint.x != 0 && colPoint.y != 0)
-	{
-		fPoint dir = p2 - p1;
-		dir = dir.Normalize();
-		dir.y = -dir.y;
-		dinBody->position = colPoint + dir * dinBody->radius;
-		ResolveColForce(*dinBody, *staticBody, colPoint);
-		return;
-	}
-
-	// rect line 2
-	p3 = { staticBody->position.x - (staticBody->width / 2), staticBody->position.y - (staticBody->height / 2) };
-	p4 = p3;
-	p4.y += staticBody->height;
-
-	colPoint = IntersectionPoint(p1, p2, p3, p4);
-
-	if (colPoint.x != 0 && colPoint.y != 0)
-	{
-		fPoint dir = p2 - p1;
-		dir = dir.Normalize();
-		dir.y = -dir.y;
-		dinBody->position = colPoint + dir * dinBody->radius;
-		ResolveColForce(*dinBody, *staticBody, colPoint);
-		return;
-	}
-
-	// rect line 3
-	p3 = { staticBody->position.x - (staticBody->width / 2), staticBody->position.y - (staticBody->height / 2) };
-	p3.y += staticBody->height;
-	p4 = p3;
-	p4.x += staticBody->width;
-
-	colPoint = IntersectionPoint(p1, p2, p3, p4);
-
-	if (colPoint.x != 0 && colPoint.y != 0)
-	{
-		fPoint dir = p2 - p1;
-		dir = dir.Normalize();
-		dir.y = -dir.y;
-		dinBody->position = colPoint + dir * dinBody->radius;
-		ResolveColForce(*dinBody, *staticBody, colPoint);
-		return;
-	}
-
-	// rect line 4
-	p3 = { staticBody->position.x - (staticBody->width / 2), staticBody->position.y - (staticBody->height / 2) };
-	p3.x += staticBody->width;
-	p4 = p3;
-	p4.y += staticBody->height;
-
-	colPoint = IntersectionPoint(p1, p2, p3, p4);
-
-	if (colPoint.x != 0 && colPoint.y != 0)
-	{
-		fPoint dir = p2 - p1;
-		dir = dir.Normalize();
-		dir.y = -dir.y;
-		dinBody->position = colPoint + dir * dinBody->radius;
-		ResolveColForce(*dinBody, *staticBody, colPoint);
-		return;
-	}
-}
-
-fPoint PhysicWorld::IntersectionPoint(fPoint p1, fPoint p2, fPoint p3, fPoint p4)
-{
-	fPoint colPoint = { 0, 0 };
-
-	float lambda = (((p4.x - p2.x) * (p3.y - p4.y)) - ((p4.y - p2.y) * (p3.x - p4.x))) / (((p1.x - p2.x) * (p3.y - p4.y)) - ((p1.y - p2.y) * (p3.x - p4.x)));
-
-	if (IN_RANGE(lambda, 0, 1))
-	{
-		colPoint.x = lambda * p1.x + (1 - lambda) * (p2.x);
-		colPoint.y = lambda * p1.y + (1 - lambda) * (p2.y);
-	}
-
-	//printf("x = %f \t y= %f\n", colPoint.x, colPoint.y);
-
-	return colPoint;
-}
-
-
-float PhysicWorld::submergedVolume(PhysicBody* body, PhysicBody* water)
-{
-	if (body->shape == ShapeType::CIRCLE)
-	{
-		//Obtain the water Y position substracting his height because the pos of the body is in the center
-		float waterYpos = water->position.y - water->height / 2;
-
-		float bodySubmergedHeight = body->position.y + body->radius - waterYpos;
-
-		float totalsubmergedarea = bodySubmergedHeight * body->radius * 2;
-
-		totalsubmergedarea /= body->radius * 2 * body->radius * 2;
-
-		return totalsubmergedarea * SQUARETOCIRCLE;
-	}
-
-	if (body->shape == ShapeType::RECT)
-	{
-		//Obtain the water Y position substracting his height because the pos of the body is in the center
-		float waterYpos = water->position.y - water->height / 2;
-
-		float bodySubmergedHeight = body->position.y + body->height / 2 - waterYpos;
-
-		float totalsubmergedarea = bodySubmergedHeight * body->width;
-
-		totalsubmergedarea /= body->width * body->height;
-
-		return totalsubmergedarea;
-	}
 }

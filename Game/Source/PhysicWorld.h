@@ -25,56 +25,17 @@ public:
 
 	void ResolveColForce(PhysicBody& b1, PhysicBody& b2, fPoint colPoint);
 
-	float submergedVolume(PhysicBody* body, PhysicBody* water);
-
-	void SetAir(fPoint windforce)
-	{
-		air = windforce;
-	}
-
-	void SetGravity(fPoint gravityforce)
-	{
-		gravity = gravityforce;
-	}
-
-	fPoint GetWind()
-	{
-		return air;
-	}
-
-	fPoint GetGravity()
-	{
-		return gravity;
-	}
-
 	// Detect collision point in 2 shapes
 	fPoint CollisionPoint(PhysicBody& b1, PhysicBody& b2);
 
 	// Dectet center of shape -> collision point(any point) vector
 	fPoint CollisionDir(PhysicBody& b1, fPoint colPoint);
 
-	// Resolve clamping case
-	void ResolveClipping(PhysicBody& b1, PhysicBody& b2);
-
-	/// <summary>
-	/// Check intersectionPoint of 2 lines
-	/// </summary>
-	/// <param name="p1">init of line 1</param>
-	/// <param name="p2">end of line 1</param>
-	/// <param name="p3">init of line 2</param>
-	/// <param name="p4">end of line 2</param>
-	/// <returns></returns>
-	fPoint IntersectionPoint(fPoint p1, fPoint p2, fPoint p3, fPoint p4);
-private:
+public:
 
 	fPoint gravity;
 
 	float density = 1.0f;
-
-	fPoint air = { 0,0 };
-
-	int resolveColForce = 5;
-
 public:
 
 	bool gravityOn = true;
