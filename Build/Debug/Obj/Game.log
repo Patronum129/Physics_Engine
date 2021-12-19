@@ -1,3 +1,72 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(505,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  Game.vcxproj -> D:\Physics_Engine\Build\Debug\Game.exe
-  已复制         1 个文件。
+  App.cpp
+D:\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': macro redefinition
+D:\Physics_Engine\Game\Source\Globals.h(5): message : see previous definition of 'LOG'
+D:\Physics_Engine\Game\Source\App.cpp(180,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\Physics_Engine\Game\Source\App.cpp(202,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Physics_Engine\Game\Source\App.cpp(208,47): warning C4244: 'argument': conversion from 'float' to 'Uint32', possible loss of data
+  Map.cpp
+D:\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': macro redefinition
+D:\Physics_Engine\Game\Source\Globals.h(5): message : see previous definition of 'LOG'
+  PhysicBody.cpp
+  PhysicWorld.cpp
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(16,20): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(41,93): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(57,21): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(130,20): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(143,20): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(183,21): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(204,20): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(241,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(246,21): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(284,21): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(328,44): error C2679: binary '-': no operator found which takes a right-hand operand of type 'iPoint' (or there is no acceptable conversion)
+D:\Physics_Engine\Game\Source\Point.h(38,8): message : could be 'Point<float> Point<float>::operator -(const Point<float> &) const'
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(328,44): message : while trying to match the argument list '(fPoint, iPoint)'
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(333,21): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(366,20): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(521,51): error C2440: 'initializing': cannot convert from 'Point<int>' to 'Point<float>'
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(521,51): message : No constructor could take the source type, or constructor overload resolution was ambiguous
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(525,66): error C2679: binary '+': no operator found which takes a right-hand operand of type 'Point<float>' (or there is no acceptable conversion)
+D:\Physics_Engine\Game\Source\Point.h(48,8): message : could be 'Point<int> Point<int>::operator +(const Point<int> &) const'
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(525,66): message : while trying to match the argument list '(iPoint, Point<float>)'
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(534,55): error C2679: binary '=': no operator found which takes a right-hand operand of type 'Point<int>' (or there is no acceptable conversion)
+D:\Physics_Engine\Game\Source\Point.h(234,1): message : could be 'Point<float> &Point<float>::operator =(const Point<float> &)'
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(534,55): message : while trying to match the argument list '(fPoint, Point<int>)'
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(540,53): error C2679: binary '+': no operator found which takes a right-hand operand of type 'fPoint' (or there is no acceptable conversion)
+D:\Physics_Engine\Game\Source\Point.h(48,8): message : could be 'Point<int> Point<int>::operator +(const Point<int> &) const'
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(540,53): message : while trying to match the argument list '(iPoint, fPoint)'
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(548,42): error C2679: binary '-': no operator found which takes a right-hand operand of type 'fPoint' (or there is no acceptable conversion)
+D:\Physics_Engine\Game\Source\Point.h(38,8): message : could be 'Point<int> Point<int>::operator -(const Point<int> &) const'
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(548,42): message : while trying to match the argument list '(iPoint, fPoint)'
+  Render.cpp
+D:\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': macro redefinition
+D:\Physics_Engine\Game\Source\Globals.h(5): message : see previous definition of 'LOG'
+  Scene.cpp
+D:\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': macro redefinition
+D:\Physics_Engine\Game\Source\Globals.h(5): message : see previous definition of 'LOG'
+D:\Physics_Engine\Game\Source\Scene.cpp(44,68): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\Physics_Engine\Game\Source\Scene.cpp(44,60): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\Physics_Engine\Game\Source\Scene.cpp(46,71): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\Physics_Engine\Game\Source\Scene.cpp(46,62): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\Physics_Engine\Game\Source\Scene.cpp(84,24): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\Physics_Engine\Game\Source\Scene.cpp(88,25): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\Physics_Engine\Game\Source\Scene.cpp(92,25): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\Physics_Engine\Game\Source\Scene.cpp(138,90): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  Textures.cpp
+D:\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': macro redefinition
+D:\Physics_Engine\Game\Source\Globals.h(5): message : see previous definition of 'LOG'
+D:\Physics_Engine\Game\Source\List.h(118,1): warning C4150: deletion of pointer to incomplete type 'SDL_Texture'; no destructor called
+D:\Physics_Engine\Game\Source\Textures.h(8): message : see declaration of 'SDL_Texture'
+D:\Physics_Engine\Game\Source\List.h(85): message : while compiling class template member function 'bool List<SDL_Texture *>::del(ListItem<tdata> *)'
+          with
+          [
+              tdata=SDL_Texture *
+          ]
+D:\Physics_Engine\Game\Source\Textures.cpp(92): message : see reference to function template instantiation 'bool List<SDL_Texture *>::del(ListItem<tdata> *)' being compiled
+          with
+          [
+              tdata=SDL_Texture *
+          ]
+D:\Physics_Engine\Game\Source\Textures.h(37): message : see reference to class template instantiation 'List<SDL_Texture *>' being compiled
+  Generating Code...

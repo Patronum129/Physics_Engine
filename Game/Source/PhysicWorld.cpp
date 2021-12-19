@@ -518,7 +518,7 @@ fPoint PhysWorld::CollisionPoint(PhysicBody& b1, PhysicBody& b2)
 	// Check CIRCLE CIRCLE collision point
 	if (b1.shape == ShapeType::CIRCLE && b2.shape == ShapeType::CIRCLE)
 	{
-		fPoint dir = b1.GetPosition() - b2.GetPosition();
+		iPoint dir = b1.GetPosition() - b2.GetPosition();
 
 		dir *= -1;
 		// PUNTO DE COLISION!!!!!

@@ -13,6 +13,12 @@ void log(const char file[], int line, const char* format, ...);
 #define PI 3.1415926535898f
 #define SQUARETOCIRCLE 0.7853981f
 
+#define PIXELS_PER_METERS 10.0f
+#define METERS_PER_PIXELS 1.0f/PIXELS_PER_METERS
+
+#define METERS_TO_PIXELS(x) ((int) floor(x * PIXELS_PER_METERS))
+#define PIXELS_TO_METERS(x) ((float)(x * METERS_PER_PIXELS))
+
 typedef unsigned int uint;
 
 enum UpdateStatus

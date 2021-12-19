@@ -23,6 +23,8 @@ enum class COL_TYPE
 	TRIGGER
 };
 
+class GameObject;
+
 class PhysicBody
 {
 private:
@@ -56,6 +58,8 @@ private:
 	fPoint additionalForce = { 0.0, 0.0 };
 
 	List<PhysicBody*> collisionList;
+
+	GameObject* gobject;
 public:
 	PhysicBody();
 
@@ -104,13 +108,18 @@ public:
 	}
 
 	// Get & Set
-	fPoint GetPosition()
+	iPoint GetPosition()
 	{
-		return position;
+		int x = (int)METERS_TO_PIXELS(position.x);
+		int y = (int)METERS_TO_PIXELS(position.y);
+
+		iPoint pos = { (int)(METERS_TO_PIXELS(position.x)), (int)(METERS_TO_PIXELS(position.y)) };
+		return pos;
 	}
 	void SetPosition(fPoint pos)
 	{
-		this->position = pos;
+		this->position.x = PIXELS_TO_METERS(pos.x);
+		this->position.y = PIXELS_TO_METERS(pos.y);
 	}
 
 	float GetRestitution()
@@ -191,6 +200,11 @@ public:
 	float GetRadius()
 	{
 		return radius;
+	}
+
+	BodyType GetType()
+	{
+		return type;
 	}
 private:
 

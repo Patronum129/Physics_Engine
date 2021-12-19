@@ -1,5 +1,6 @@
 #pragma once
 #include "PhysicBody.h"
+#include "List.h"
 
 class PhysWorld
 {
@@ -76,6 +77,13 @@ private:
 	int resolveColForce = 5;
 
 public:
+
+	bool gravityOn = true;
+	bool buoyancyOn = true;
+	bool hydrioDragOn = true;
+	bool aeroDragOn = true;
+	bool clippingOn = true;
+	bool frictioOn = true;
 
 	List<PhysicBody*> physicBodies;
 };
