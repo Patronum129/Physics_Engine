@@ -4,6 +4,7 @@
   <app>
     <title>Phyisic Engine</title>
     <organization>UPC</organization>
+    <frcap value = "16"/>
   </app>
 
   <renderer>
