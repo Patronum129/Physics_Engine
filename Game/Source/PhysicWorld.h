@@ -2,12 +2,12 @@
 #include "PhysicBody.h"
 #include "List.h"
 
-class PhysWorld
+class PhysicWorld
 {
 public:
-	PhysWorld(fPoint gravity);
+	PhysicWorld(fPoint gravity);
 
-	~PhysWorld();
+	~PhysicWorld();
 
 	void Update(float simulationTime);
 
@@ -15,19 +15,19 @@ public:
 
 	void AddPhysicBody(PhysicBody* body);
 
-	void DeleteRigidBody(PhysicBody* body);
+	void DelPhysicBody(PhysicBody* body);
 
-	void BoxColBox(PhysicBody& b1, PhysicBody& b2, bool trigger = false);
+	void BoxColBox(PhysicBody& b1, PhysicBody& b2);
 
-	void CircleColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger = false);
+	void CircleColCircle(PhysicBody& b1, PhysicBody& b2);
 
-	void BoxColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger = false);
+	void BoxColCircle(PhysicBody& b1, PhysicBody& b2);
 
 	void ResolveColForce(PhysicBody& b1, PhysicBody& b2, fPoint colPoint);
 
 	float submergedVolume(PhysicBody* body, PhysicBody* water);
 
-	void SetWind(fPoint windforce)
+	void SetAir(fPoint windforce)
 	{
 		air = windforce;
 	}
@@ -65,14 +65,13 @@ public:
 	/// <param name="p4">end of line 2</param>
 	/// <returns></returns>
 	fPoint IntersectionPoint(fPoint p1, fPoint p2, fPoint p3, fPoint p4);
-
 private:
 
 	fPoint gravity;
 
 	float density = 1.0f;
 
-	fPoint air = { 0, 0 };
+	fPoint air = { 0,0 };
 
 	int resolveColForce = 5;
 

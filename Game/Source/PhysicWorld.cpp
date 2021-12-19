@@ -1,17 +1,17 @@
 ﻿#include "PhysicWorld.h"
 #include <algorithm>
 
-PhysWorld::PhysWorld(fPoint gravity)
+PhysicWorld::PhysicWorld(fPoint gravity)
 {
 	this->gravity = gravity;
 }
 
-PhysWorld::~PhysWorld()
+PhysicWorld::~PhysicWorld()
 {
 	physicBodies.clear();
 }
 
-void PhysWorld::Update(float simulationTime)
+void PhysicWorld::Update(float simulationTime)
 {
 	for (int i = 0; i < physicBodies.count(); i++)
 	{
@@ -22,30 +22,36 @@ void PhysWorld::Update(float simulationTime)
 
 		// Step #1 Calculate Forces (TotalForces = GravityForce + AdditionalForce)
 		//	gravity
-		physicBodies[i]->AddForceToCenter(gravity * physicBodies[i]->gravityScale * physicBodies[i]->GetMass());
+		if (gravityOn)
+		{
+			physicBodies[i]->AddForceToCenter(gravity * physicBodies[i]->gravityScale * physicBodies[i]->GetMass());
+		}
 
 		//	Drag	(0.5 * density * relative velocity square * surface * Drag coeficient)
-		fPoint dragForce;
-		fPoint relativeVelocity;
-		float relativeVelocityModule;
-		float magnitudDrag;
+		if (aeroDragOn)
+		{
+			fPoint dragForce;
+			fPoint relativeVelocity;
+			float relativeVelocityModule;
+			float magnitudDrag;
 
-		// Calcular velocidad relativa entre viento y body
-		relativeVelocity.x = air.x - physicBodies[i]->GetLinearVelocity().x;
-		relativeVelocity.y = air.y - physicBodies[i]->GetLinearVelocity().y;
+			// Calcular velocidad relativa entre viento y body
+			relativeVelocity.x = air.x - physicBodies[i]->GetLinearVelocity().x;
+			relativeVelocity.y = air.y - physicBodies[i]->GetLinearVelocity().y;
 
-		// Calcular el modulo de la velocidad relativa
-		relativeVelocityModule = relativeVelocity.Module();
+			// Calcular el modulo de la velocidad relativa
+			relativeVelocityModule = relativeVelocity.Module();
 
-		// Calcular el magnitud del drag
-		magnitudDrag = 0.5f * density * physicBodies[i]->surface * pow(relativeVelocityModule, 2) * physicBodies[i]->GetDragCoeficient();
+			// Calcular el magnitud del drag
+			magnitudDrag = 0.5f * density * physicBodies[i]->surface * pow(relativeVelocityModule, 2) * physicBodies[i]->GetDragCoeficient();
 
-		fPoint relativeDir = relativeVelocity.Normalize();
+			fPoint nor = relativeVelocity.Normalize();
 
-		// Calcular la fuerza de drag
-		dragForce = relativeDir * magnitudDrag;
+			// Calcular la fuerza de drag
+			dragForce = nor * magnitudDrag;
 
-		physicBodies[i]->AddForceToCenter(dragForce);
+			physicBodies[i]->AddForceToCenter(dragForce);
+		}
 
 		physicBodies[i]->totalForce = physicBodies[i]->additionalForce;
 		physicBodies[i]->additionalForce = { 0,0 };
@@ -64,7 +70,7 @@ void PhysWorld::Update(float simulationTime)
 			// Collision
 			else
 			{
-				if (physicBodies[i]->collisionList[j]->type == BodyType::WATER)
+				if (physicBodies[i]->collisionList[j]->type == BodyType::WATER && buoyancyOn)
 				{
 					//Buoyancy (Density * gravity * area of the object flooded)
 					fPoint buoyancyForce;
@@ -77,7 +83,7 @@ void PhysWorld::Update(float simulationTime)
 					// 1 = 100%
 					float submerge = submergedVolume(physicBodies[i], physicBodies[i]->collisionList[j]);
 
-					printf("%f\n", submerge);
+					//printf("%f\n", submerge);
 
 					// *2 = 200% para que pueda subir
 					magnitudbuoyancy = density * mod * submerge * 2 * physicBodies[i]->GetGravityScale();
@@ -87,21 +93,25 @@ void PhysWorld::Update(float simulationTime)
 					physicBodies[i]->AddForceToCenter(buoyancyForce);
 
 					// Calcular la fuerza de drag hidrodinamica
-					dragForce = (physicBodies[i]->velocity * -1) * physicBodies[i]->hydrodynamicDrag;
+					if (hydrioDragOn)
+					{
+						fPoint dragForce = (physicBodies[i]->velocity * -1) * physicBodies[i]->hydrodynamicDrag;
 
-					physicBodies[i]->AddForceToCenter(dragForce);
+						physicBodies[i]->AddForceToCenter(dragForce);
+					}
 				}
 				else
 				{
 					// Clipping case!!!
-					if (physicBodies[i]->colType == COL_TYPE::COLLISION && physicBodies[i]->collisionList[j]->type == BodyType::STATIC)
+					if (physicBodies[i]->colType == COL_TYPE::COLLISION && physicBodies[i]->collisionList[j]->type == BodyType::STATIC && clippingOn)
 					{
-						ResolveClipping(*physicBodies[i], *physicBodies[i]->collisionList[j]);
+						if (physicBodies[i]->collisionList[j]->Contains(physicBodies[i]->position))
+							ResolveClipping(*physicBodies[i], *physicBodies[i]->collisionList[j]);
 					}
 					//FUERZA DE FRICCIÓN
-					if (physicBodies[i]->collisionList[j]->type == BodyType::STATIC)
+					if (physicBodies[i]->collisionList[j]->type == BodyType::STATIC && frictioOn)
 					{
-						dragForce = (physicBodies[i]->GetLinearVelocity() * -1) * physicBodies[i]->GetFriction();
+						fPoint dragForce = (physicBodies[i]->GetLinearVelocity() * -1) * physicBodies[i]->GetFriction();
 
 						physicBodies[i]->AddForceToCenter(dragForce);
 					}
@@ -113,15 +123,13 @@ void PhysWorld::Update(float simulationTime)
 			}
 		}
 
-		// Check if next position is colling
-		//fPoint nextPosition = rigidBodies[i]->position + rigidBodies[i]->velocity * simulationTime + rigidBodies[i]->acceleration * (simulationTime * simulationTime * 0.5f);
-
 		// If velocity is few, ignore
 		if (abs(physicBodies[i]->velocity.x) < 0.1f) physicBodies[i]->velocity.x = 0;
 		if (abs(physicBodies[i]->velocity.y) < 0.1f) physicBodies[i]->velocity.y = 0;
 
-		// Step #3 Integrate with Verlet
+		// Save lastPosition
 		physicBodies[i]->lastPosition = physicBodies[i]->position;
+		// Step #3 Integrate with Verlet	
 		physicBodies[i]->position += physicBodies[i]->velocity * simulationTime + physicBodies[i]->acceleration * (simulationTime * simulationTime * 0.5f);
 		physicBodies[i]->velocity += physicBodies[i]->acceleration * simulationTime;
 	}
@@ -137,7 +145,7 @@ void PhysWorld::Update(float simulationTime)
 	}
 }
 
-bool PhysWorld::CheckCollision(PhysicBody* body)
+bool PhysicWorld::CheckCollision(PhysicBody* body)
 {
 	// Check if body is colliding with any other body on rigidBodies
 	for (int i = 0; i < physicBodies.count(); i++)
@@ -162,17 +170,17 @@ bool PhysWorld::CheckCollision(PhysicBody* body)
 	return true;
 }
 
-void PhysWorld::AddPhysicBody(PhysicBody* body)
+void PhysicWorld::AddPhysicBody(PhysicBody* body)
 {
 	physicBodies.add(body);
 }
 
-void PhysWorld::DeleteRigidBody(PhysicBody* body)
+void PhysicWorld::DelPhysicBody(PhysicBody* body)
 {
 	physicBodies.del(physicBodies.At(physicBodies.find(body)));
 }
 
-void PhysWorld::BoxColBox(PhysicBody& b1, PhysicBody& b2, bool trigger)
+void PhysicWorld::BoxColBox(PhysicBody& b1, PhysicBody& b2)
 {
 	// No collision case
 	if (b1.position.x > b2.position.x + b2.width ||
@@ -187,7 +195,7 @@ void PhysWorld::BoxColBox(PhysicBody& b1, PhysicBody& b2, bool trigger)
 			{
 				if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
 				{
-					b1.OnCollisionLeave(&b2);
+					b1.OnCollisionExit(&b2);
 				}
 				else
 				{
@@ -208,7 +216,7 @@ void PhysWorld::BoxColBox(PhysicBody& b1, PhysicBody& b2, bool trigger)
 		{
 			if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
 			{
-				b1.OnCollisionTouch(&b2);
+				b1.OnCollisionStay(&b2);
 				ResolveColForce(b1, b2, CollisionPoint(b1, b2));
 			}
 			else
@@ -222,7 +230,7 @@ void PhysWorld::BoxColBox(PhysicBody& b1, PhysicBody& b2, bool trigger)
 	// Collision Enter
 	if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
 	{
-		b1.OnCollision(&b2);
+		b1.OnCollisionEnter(&b2);
 		ResolveColForce(b1, b2, CollisionPoint(b1, b2));
 	}
 	else
@@ -234,7 +242,7 @@ void PhysWorld::BoxColBox(PhysicBody& b1, PhysicBody& b2, bool trigger)
 	return;
 }
 
-void PhysWorld::CircleColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger)
+void PhysicWorld::CircleColCircle(PhysicBody& b1, PhysicBody& b2)
 {
 	float distX = b1.position.x - b2.position.x;
 	float distY = b1.position.y - b2.position.y;
@@ -249,7 +257,7 @@ void PhysWorld::CircleColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger)
 			{
 				if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
 				{
-					b1.OnCollisionTouch(&b2);
+					b1.OnCollisionStay(&b2);
 					fPoint colPoint = CollisionPoint(b1, b2);
 					ResolveColForce(b1, b2, colPoint);
 				}
@@ -266,7 +274,7 @@ void PhysWorld::CircleColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger)
 
 		if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
 		{
-			b1.OnCollision(&b2);
+			b1.OnCollisionEnter(&b2);
 			fPoint colPoint = CollisionPoint(b1, b2);
 			ResolveColForce(b1, b2, colPoint);
 		}
@@ -287,7 +295,7 @@ void PhysWorld::CircleColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger)
 			{
 				if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
 				{
-					b1.OnCollisionLeave(&b2);
+					b1.OnCollisionExit(&b2);
 				}
 				else
 				{
@@ -302,7 +310,7 @@ void PhysWorld::CircleColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger)
 	}
 }
 
-void PhysWorld::BoxColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger)
+void PhysicWorld::BoxColCircle(PhysicBody& b1, PhysicBody& b2)
 {
 	PhysicBody* circ;
 	PhysicBody* rect;
@@ -325,7 +333,7 @@ void PhysWorld::BoxColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger)
 
 	colPoint = CollisionPoint(*circ, *rect);
 
-	distance = (colPoint - circ->GetPosition()).magnitude();
+	distance = (colPoint - circ->position).magnitude();
 
 	// Collision case
 	if (distance <= circ->GetRadius())
@@ -336,7 +344,7 @@ void PhysWorld::BoxColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger)
 			{
 				if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
 				{
-					b1.OnCollisionTouch(&b2);
+					b1.OnCollisionStay(&b2);
 					ResolveColForce(b1, b2, colPoint);
 					return;
 				}
@@ -352,7 +360,7 @@ void PhysWorld::BoxColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger)
 
 		if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
 		{
-			b1.OnCollision(&b2);
+			b1.OnCollisionEnter(&b2);
 			ResolveColForce(b1, b2, colPoint);
 		}
 		else
@@ -369,7 +377,7 @@ void PhysWorld::BoxColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger)
 		{
 			if (b1.colType == COL_TYPE::COLLISION && b2.colType == COL_TYPE::COLLISION)
 			{
-				b1.OnCollisionLeave(&b2);
+				b1.OnCollisionExit(&b2);
 			}
 			else
 			{
@@ -389,7 +397,7 @@ void PhysWorld::BoxColCircle(PhysicBody& b1, PhysicBody& b2, bool trigger)
 /// <param name="b1"></param>
 /// <param name="b2"></param>
 /// <param name="colPoint"></param>
-void PhysWorld::ResolveColForce(PhysicBody& b1, PhysicBody& b2, fPoint colPoint)
+void PhysicWorld::ResolveColForce(PhysicBody& b1, PhysicBody& b2, fPoint colPoint)
 {
 	PhysicBody* dinBody;
 	PhysicBody* staticBody;
@@ -404,9 +412,15 @@ void PhysWorld::ResolveColForce(PhysicBody& b1, PhysicBody& b2, fPoint colPoint)
 		dinBody = &b2;
 		staticBody = &b1;
 	}
+	else if (b2.type == BodyType::WATER || b1.type == BodyType::WATER)
+	{
+		dinBody = &b1;
+		staticBody = &b2;
+		return;
+	}
 	else
 	{
-		printf("Canno't resolve collision force!");
+		//printf("Canno't resolve collision force!");
 		return;
 	}
 
@@ -421,8 +435,8 @@ void PhysWorld::ResolveColForce(PhysicBody& b1, PhysicBody& b2, fPoint colPoint)
 		{
 			// circle && circle
 			//colCondition = colPoint;
-			colCondition = CollisionDir(*dinBody, colPoint);
 
+			colCondition = CollisionDir(*dinBody, colPoint);
 			fPoint direction = CollisionDir(*dinBody, colPoint);
 			float velMagnitud = b1Vel.magnitude();
 			b1Vel = direction * velMagnitud * b1.restitution;
@@ -430,7 +444,7 @@ void PhysWorld::ResolveColForce(PhysicBody& b1, PhysicBody& b2, fPoint colPoint)
 
 		if (b1.shape == ShapeType::RECT)
 		{
-			printf("Can not resolve force rect & rect");
+			//printf("Can not resolve force rect & rect");
 			return;
 		}
 	}
@@ -468,30 +482,26 @@ void PhysWorld::ResolveColForce(PhysicBody& b1, PhysicBody& b2, fPoint colPoint)
 	}
 
 	// Si el movimiento es muy flojo, ignora
-	b1Vel.x = abs(b1Vel.x) < dinBody->restitution * 10 ? 0 : b1Vel.x;
-	b1Vel.y = abs(b1Vel.y) < dinBody->restitution * 10 ? 0 : b1Vel.y;
+	b1Vel.x = abs(b1Vel.x) < 1 ? 0 : b1Vel.x;
+	b1Vel.y = abs(b1Vel.y) < 1 ? 0 : b1Vel.y;
 
 	dinBody->SetLinearVelocity(b1Vel);
 }
 
-fPoint PhysWorld::CollisionPoint(PhysicBody& b1, PhysicBody& b2)
+fPoint PhysicWorld::CollisionPoint(PhysicBody& b1, PhysicBody& b2)
 {
 	fPoint collisionPoint;
 
 	// Check RECT RECT collision point
 	if (b1.shape == ShapeType::RECT && b2.shape == ShapeType::RECT)
 	{
-		printf("Cannot search collision RECT & RECT collision point");
-		// NO FUNCIONA FALTA CASO DE MOVIMIENTO DIAGONAL
-
-		/*
 		// PUNTO DE COLISION???
 		collisionPoint = { b1.velocity.x, b1.velocity.y };
 
 		// col eje X
-		if(b1.velocity.y == 0)
+		if (b1.velocity.y == 0)
 		{
-			if(b1.velocity.x > 0)
+			if (b1.velocity.x > 0)
 			{
 				collisionPoint.x += b1.width;
 			}
@@ -512,47 +522,45 @@ fPoint PhysWorld::CollisionPoint(PhysicBody& b1, PhysicBody& b2)
 				collisionPoint.x -= b1.height;
 			}
 		}
-		*/
-	}
 
+		// NO FUNCIONA FALTA CASO DE MOVIMIENTO DIAGONAL
+	}
 	// Check CIRCLE CIRCLE collision point
 	if (b1.shape == ShapeType::CIRCLE && b2.shape == ShapeType::CIRCLE)
 	{
-		iPoint dir = b1.GetPosition() - b2.GetPosition();
+		fPoint dir = b1.position - b2.position;
 
 		dir *= -1;
 		// PUNTO DE COLISION!!!!!
-		collisionPoint = b1.GetPosition() + dir.Normalize() * b1.radius;
+		collisionPoint = b1.position + dir.Normalize() * b1.radius;
 	}
-
 	// Check CIRCLE RECT collision point
 	else // CIRCLE col RECT || RECT col CIRCLE
 	{
 		float height = b2.height * 0.5f;
 		float width = b2.width * 0.5f;
 
-		collisionPoint = b1.GetPosition() - b2.GetPosition();
+		collisionPoint = b1.position - b2.position;
 
 		collisionPoint.x = MAX(-width, MIN(width, collisionPoint.x));
 		collisionPoint.y = MAX(-height, MIN(height, collisionPoint.y));
 
 		// PUNTO DE COLISION!!!!!
-		collisionPoint = b2.GetPosition() + collisionPoint;
+		collisionPoint = b2.position + collisionPoint;
 	}
-
 	return collisionPoint;
 }
 
-fPoint PhysWorld::CollisionDir(PhysicBody& b1, fPoint colPoint)
+fPoint PhysicWorld::CollisionDir(PhysicBody& b1, fPoint colPoint)
 {
-	fPoint dir = b1.GetPosition() - colPoint;
+	fPoint dir = b1.position - colPoint;
 
 	dir = dir.Normalize();
 
 	return dir;
 }
 
-void PhysWorld::ResolveClipping(PhysicBody& b1, PhysicBody& b2)
+void PhysicWorld::ResolveClipping(PhysicBody& b1, PhysicBody& b2)
 {
 	PhysicBody* dinBody = nullptr;
 	PhysicBody* staticBody = nullptr;
@@ -651,7 +659,7 @@ void PhysWorld::ResolveClipping(PhysicBody& b1, PhysicBody& b2)
 	}
 }
 
-fPoint PhysWorld::IntersectionPoint(fPoint p1, fPoint p2, fPoint p3, fPoint p4)
+fPoint PhysicWorld::IntersectionPoint(fPoint p1, fPoint p2, fPoint p3, fPoint p4)
 {
 	fPoint colPoint = { 0, 0 };
 
@@ -668,30 +676,29 @@ fPoint PhysWorld::IntersectionPoint(fPoint p1, fPoint p2, fPoint p3, fPoint p4)
 	return colPoint;
 }
 
-float PhysWorld::submergedVolume(PhysicBody* body, PhysicBody* water)
+
+float PhysicWorld::submergedVolume(PhysicBody* body, PhysicBody* water)
 {
 	if (body->shape == ShapeType::CIRCLE)
 	{
 		//Obtain the water Y position substracting his height because the pos of the body is in the center
-		float waterYpos = water->GetPosition().y - water->height / 2;
+		float waterYpos = water->position.y - water->height / 2;
 
-		float bodySubmergedHeight = body->GetPosition().y + body->radius - waterYpos;
-
-		if (bodySubmergedHeight > body->radius * 2) return 1.0f;
+		float bodySubmergedHeight = body->position.y + body->radius - waterYpos;
 
 		float totalsubmergedarea = bodySubmergedHeight * body->radius * 2;
 
-		totalsubmergedarea /= (body->radius * 2 * body->radius * 2);
+		totalsubmergedarea /= body->radius * 2 * body->radius * 2;
 
-		return totalsubmergedarea;
+		return totalsubmergedarea * SQUARETOCIRCLE;
 	}
 
 	if (body->shape == ShapeType::RECT)
 	{
 		//Obtain the water Y position substracting his height because the pos of the body is in the center
-		float waterYpos = water->GetPosition().y - water->height / 2;
+		float waterYpos = water->position.y - water->height / 2;
 
-		float bodySubmergedHeight = body->GetPosition().y + body->height / 2 - waterYpos;
+		float bodySubmergedHeight = body->position.y + body->height / 2 - waterYpos;
 
 		float totalsubmergedarea = bodySubmergedHeight * body->width;
 

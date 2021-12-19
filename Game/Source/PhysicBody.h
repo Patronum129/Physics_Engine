@@ -1,19 +1,20 @@
 #pragma once
 #include "Point.h"
 #include "List.h"
+#include "Globals.h"
 
 enum class BodyType
 {
 	STATIC,
 	DYNAMIC,
 	KINEMATIC,
-	WATER
+	WATER,
 };
 
 enum class ShapeType
 {
 	CIRCLE,
-	RECT
+	RECT,
 };
 
 enum class COL_TYPE
@@ -32,7 +33,7 @@ private:
 	fPoint position = { 0.0, 0.0 };
 	fPoint lastPosition = { 0.0,0.0 };
 
-	// Properties
+	//Properties
 	float restitution = 0.0f;
 	float friction = 0.0f;
 	float coefficientDrag = 0.0f;
@@ -47,7 +48,6 @@ private:
 	float height = 1.0f;
 	float radius = 1.0f;
 
-	// Tags
 	BodyType type = BodyType::STATIC;
 	ShapeType shape = ShapeType::RECT;
 	COL_TYPE colType = COL_TYPE::COLLISION;
@@ -59,23 +59,24 @@ private:
 
 	List<PhysicBody*> collisionList;
 
-	GameObject* gobject;
+	GameObject* gObject;
+
 public:
 	PhysicBody();
 
 	~PhysicBody();
 
-	PhysicBody(fPoint pos, BodyType type, float width, float height, COL_TYPE colType = COL_TYPE::COLLISION);
+	PhysicBody(iPoint pos, BodyType type, float width, float height, GameObject* gObj = nullptr, COL_TYPE colType = COL_TYPE::COLLISION);
 
-	PhysicBody(fPoint pos, BodyType type, float radius, COL_TYPE colType = COL_TYPE::COLLISION);
+	PhysicBody(iPoint pos, BodyType type, float radius, GameObject* gObj = nullptr, COL_TYPE colType = COL_TYPE::COLLISION);
 
 	PhysicBody(PhysicBody& copy);
 
-	void OnCollision(PhysicBody* col);
+	void OnCollisionEnter(PhysicBody* col);
 
-	void OnCollisionTouch(PhysicBody* col);
+	void OnCollisionStay(PhysicBody* col);
 
-	void OnCollisionLeave(PhysicBody* col);
+	void OnCollisionExit(PhysicBody* col);
 
 	void OnTriggerEnter(PhysicBody* col);
 
@@ -116,7 +117,7 @@ public:
 		iPoint pos = { (int)(METERS_TO_PIXELS(position.x)), (int)(METERS_TO_PIXELS(position.y)) };
 		return pos;
 	}
-	void SetPosition(fPoint pos)
+	void SetPosition(iPoint pos)
 	{
 		this->position.x = PIXELS_TO_METERS(pos.x);
 		this->position.y = PIXELS_TO_METERS(pos.y);
@@ -210,5 +211,5 @@ private:
 
 	void ResetForces();
 
-	friend class PhysWorld;
+	friend class PhysicWorld;
 };
