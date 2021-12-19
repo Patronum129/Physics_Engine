@@ -73,6 +73,9 @@ bool Scene::Start()
 	p->player->gravityScale = 5;
 	p->player->friction = 1;
 
+	water = new PhysicBody({ 504,674 }, BodyType::WATER, 1280, 5);
+	world->AddPhysicBody(water);
+
 	walls[0] = new PhysicBody({ 640,0 }, BodyType::STATIC, 1280, 5);
 	walls[1] = new PhysicBody({ 0,360 }, BodyType::STATIC, 5, 720);
 	walls[2] = new PhysicBody({ 1270,354 }, BodyType::STATIC, 5, 720);

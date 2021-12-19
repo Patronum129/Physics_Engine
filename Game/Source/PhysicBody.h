@@ -27,8 +27,8 @@ public:
 	//Properties
 	float restitution = 0.0f;
 	float friction = 0.0f;
-	float coefficientDrag = 0.0f;
-	float hydrodynamicDrag = 0.3f;
+	float coefficient = 0.0f;
+	float hydrodynamic = 0.3f;
 	float mass = 1.0f;
 	fPoint velocity = { 0.0f, 0.0f };
 	fPoint acceleration = { 0.0, 0.0 };

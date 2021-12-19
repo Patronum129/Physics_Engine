@@ -1,12 +1,4 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(505,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  App.cpp
-D:\Physics_Engine\Game\Source\Animation.h(55,19): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-D:\Physics_Engine\Game\Source\Animation.h(57,30): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-D:\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': macro redefinition
-D:\Physics_Engine\Game\Source\Globals.h(5): message : see previous definition of 'LOG'
-D:\Physics_Engine\Game\Source\App.cpp(180,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\Physics_Engine\Game\Source\App.cpp(202,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\Physics_Engine\Game\Source\App.cpp(208,47): warning C4244: 'argument': conversion from 'float' to 'Uint32', possible loss of data
   PhysicBody.cpp
 D:\Physics_Engine\Game\Source\PhysicBody.cpp(14,24): warning C4244: '=': conversion from 'TYPE' to 'TYPE', possible loss of data
           with
@@ -46,19 +38,19 @@ D:\Physics_Engine\Game\Source\PhysicBody.cpp(25,24): warning C4244: '=': convers
           ]
   PhysicWorld.cpp
 D:\Physics_Engine\Game\Source\PhysicWorld.cpp(16,20): warning C4018: '<': signed/unsigned mismatch
-D:\Physics_Engine\Game\Source\PhysicWorld.cpp(46,71): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\Physics_Engine\Game\Source\PhysicWorld.cpp(63,21): warning C4018: '<': signed/unsigned mismatch
-D:\Physics_Engine\Game\Source\PhysicWorld.cpp(125,20): warning C4018: '<': signed/unsigned mismatch
-D:\Physics_Engine\Game\Source\PhysicWorld.cpp(138,20): warning C4018: '<': signed/unsigned mismatch
-D:\Physics_Engine\Game\Source\PhysicWorld.cpp(178,21): warning C4018: '<': signed/unsigned mismatch
-D:\Physics_Engine\Game\Source\PhysicWorld.cpp(192,20): warning C4018: '<': signed/unsigned mismatch
-D:\Physics_Engine\Game\Source\PhysicWorld.cpp(215,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\Physics_Engine\Game\Source\PhysicWorld.cpp(220,21): warning C4018: '<': signed/unsigned mismatch
-D:\Physics_Engine\Game\Source\PhysicWorld.cpp(244,21): warning C4018: '<': signed/unsigned mismatch
-D:\Physics_Engine\Game\Source\PhysicWorld.cpp(286,21): warning C4018: '<': signed/unsigned mismatch
-D:\Physics_Engine\Game\Source\PhysicWorld.cpp(304,20): warning C4018: '<': signed/unsigned mismatch
-D:\Physics_Engine\Game\Source\PhysicWorld.cpp(264,8): warning C4101: 'height': unreferenced local variable
-D:\Physics_Engine\Game\Source\PhysicWorld.cpp(265,8): warning C4101: 'width': unreferenced local variable
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(39,71): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(53,21): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(101,20): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(112,20): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(150,21): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(162,20): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(183,17): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(187,21): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(210,21): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(251,21): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(268,20): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(230,8): warning C4101: 'height': unreferenced local variable
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(231,8): warning C4101: 'width': unreferenced local variable
 D:\Physics_Engine\Game\Source\Point.h(231,14): warning C4244: 'return': conversion from 'double' to 'TYPE', possible loss of data
           with
           [
@@ -69,7 +61,7 @@ D:\Physics_Engine\Game\Source\Point.h(230): message : while compiling class temp
           [
               TYPE=float
           ]
-D:\Physics_Engine\Game\Source\PhysicWorld.cpp(281): message : see reference to function template instantiation 'TYPE Point<TYPE>::magnitude(void)' being compiled
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(247): message : see reference to function template instantiation 'TYPE Point<TYPE>::magnitude(void)' being compiled
           with
           [
               TYPE=float
@@ -85,7 +77,7 @@ D:\Physics_Engine\Game\Source\Point.h(194): message : while compiling class temp
           [
               TYPE=float
           ]
-D:\Physics_Engine\Game\Source\PhysicWorld.cpp(43): message : see reference to function template instantiation 'TYPE Point<TYPE>::Module(void)' being compiled
+D:\Physics_Engine\Game\Source\PhysicWorld.cpp(37): message : see reference to function template instantiation 'TYPE Point<TYPE>::Module(void)' being compiled
           with
           [
               TYPE=float
@@ -95,8 +87,18 @@ D:\Physics_Engine\Game\Source\Animation.h(55,19): warning C4244: 'initializing':
 D:\Physics_Engine\Game\Source\Animation.h(57,30): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
 D:\Physics_Engine\Game\Source\Log.h(4,1): warning C4005: 'LOG': macro redefinition
 D:\Physics_Engine\Game\Source\Globals.h(5): message : see previous definition of 'LOG'
-D:\Physics_Engine\Game\Source\Scene.cpp(73,24): warning C4305: 'argument': truncation from 'double' to 'float'
-D:\Physics_Engine\Game\Source\Scene.cpp(107,20): warning C4018: '<': signed/unsigned mismatch
+D:\Physics_Engine\Game\Source\Scene.cpp(114,24): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\Physics_Engine\Game\Source\Scene.cpp(182,95): warning C4244: 'argument': conversion from 'TYPE' to 'int', possible loss of data
+          with
+          [
+              TYPE=float
+          ]
+D:\Physics_Engine\Game\Source\Scene.cpp(182,65): warning C4244: 'argument': conversion from 'TYPE' to 'int', possible loss of data
+          with
+          [
+              TYPE=float
+          ]
+D:\Physics_Engine\Game\Source\Scene.cpp(207,20): warning C4018: '<': signed/unsigned mismatch
   Generating Code...
   Game.vcxproj -> D:\Physics_Engine\Build\Debug\Game.exe
   已复制         1 个文件。
