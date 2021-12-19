@@ -38,6 +38,7 @@ public:
 	// called to deactivate module
 	void Deactivate();
 
+	void InitMapLevel();
 private:
 	SDL_Texture* img;
 };
