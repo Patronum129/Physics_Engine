@@ -35,7 +35,7 @@ bool Scene::Start()
 {
 	// Load map
 	//app->map->Load("map1.tmx");
-	//img = app->tex->Load("Assets/Textures/map1.png");
+	img = app->tex->Load("Assets/Textures/map1.png");
 	//app->audio->PlayMusic("Assets/Audio/Music/Retro_Platforming_David_Fesliyan.ogg");
 	app->render->camera.x = app->render->camera.y = 0;
 

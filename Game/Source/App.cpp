@@ -87,9 +87,19 @@ bool App::Awake()
 			ret = item->data->Awake(config.child(item->data->name.GetString()));
 			item = item->next;
 		}
+		
+	}
+	if (config.empty() == false)
+	{
+		ret = true;
+		configApp = config.child("app");
+
+		// L01: DONE 4: Read the title from the config file
+		title.Create(configApp.child("title").child_value());
+		organization.Create(configApp.child("organization").child_value());
+
 		maxFrameRate = configApp.child("frcap").attribute("value").as_int();
 	}
-
 	return ret;
 }
 
@@ -110,7 +120,7 @@ bool App::Start()
 	}
 
 	// Start so initial deltatime is around 0
-	frameDuration->Start();
+//	frameDuration->Start();
 
 	return ret;
 }
@@ -167,7 +177,7 @@ void App::PrepareUpdate()
 	lastSecFrameCount++;
 
 	// Calculate the dt: differential time since last frame
-	dt = frameDuration->ReadMs() / 1000.0f; // Convert to seconds
+	dt = frameDuration->ReadMs(); // Convert to seconds / 1000.0f
 	frameDuration->Start();
 }
 
@@ -183,18 +193,10 @@ void App::FinishUpdate()
 		averageFps = (averageFps + framesPerSecond) / 2;
 	}
 
+	
 	static char title[256];
-	bool is_vsync = config.child("renderer").child("vsync").attribute("value").as_bool(true);
-	int lastFrameMs = frameDuration->ReadMs();
-
-	/*if (is_vsync == true) {
-		sprintf_s(title, 256, "FPS: %i Av.FPS: %.2f Last-frame MS: %i Vsync: on",
-			framesPerSecond, averageFps, lastFrameMs);
-	}
-	else {
-		sprintf_s(title, 256, "FPS: %i Av.FPS: %.2f Last-frame MS: %i Vsync: off",
-			framesPerSecond, averageFps, lastFrameMs);
-	}*/
+	sprintf_s(title, 256, "Av.FPS: %.2f Last sec frames: %i Last dt: %.3f Time since startup: %.3f Frame Count: %I64u ",
+		averageFps, framesPerSecond, dt, secondsSinceStartup, frameCount);
 
 	//Use SDL_Delay to make sure you get your capped framerate
 	float delay = float(maxFrameRate) - frameDuration->ReadMs();
@@ -204,9 +206,9 @@ void App::FinishUpdate()
 	PerfTimer* delayt = new PerfTimer();
 	delayt->Start();
 	if (maxFrameRate > 0 && delay > 0) SDL_Delay(delay);
-	//LOG("Expected %f milliseconds and the real delay is % f", delay, delayt->ReadMs());
+	LOG("Expected %f milliseconds and the real delay is % f", delay, delayt->ReadMs());
 
-	//app->win->SetTitle(title);
+	app->win->SetTitle(title);
 }
 
 // Call modules before each loop iteration
