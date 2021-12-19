@@ -65,49 +65,48 @@ void PhysicWorld::Update(float simulationTime)
 			// Collision
 			
 			if (physicBodies[i]->colList[j]->type == BodyType::WATER && buoyancyOn)
-			{
-				//Buoyancy (Density * gravity * area of the object flooded)
-				fPoint buoyancyForce;
-				float magnitudbuoyancy;
-				fPoint direct = { 0, -10 };
-				fPoint direction = direct.Normalize();
+				{
+					//Buoyancy (Density * gravity * area of the object flooded)
+					fPoint buoyancyForce;
+					float magnitudbuoyancy;
+					fPoint direct = { 0, -10 };
+					fPoint direction = direct.Normalize();
 
-				float mod = gravity.Module();
+					float mod = gravity.Module();
 
-				// 1 = 100%
-				float submerge = 0.5;
+					// 1 = 100%
+					float submerge = 0.5;
 
-				//printf("%f\n", submerge);
+					//printf("%f\n", submerge);
 
-				// *2 = 200% para que pueda subir
-				magnitudbuoyancy = density * mod * submerge * 2 * physicBodies[i]->gravityScale;
+					// *2 = 200% para que pueda subir
+					magnitudbuoyancy = density * mod * submerge * 2 * physicBodies[i]->gravityScale;
 
-				buoyancyForce = direction * magnitudbuoyancy;
+					buoyancyForce = direction * magnitudbuoyancy;
 
-				physicBodies[i]->AddForceToCenter(buoyancyForce);
+					physicBodies[i]->AddForceToCenter(buoyancyForce);
 
-				// Calcular la fuerza de drag hidrodinamica
+					// Calcular la fuerza de drag hidrodinamica
 				if (hydrioDragOn)
 				{
 					fPoint dragForce = (physicBodies[i]->velocity * -1) * physicBodies[i]->hydrodynamicDrag;
 
 					physicBodies[i]->AddForceToCenter(dragForce);
 				}
-			}
-			else
-			{
-				//FUERZA DE FRICCIÓN
-				if (physicBodies[i]->colList[j]->type == BodyType::STATIC && frictioOn)
+				else
 				{
-					fPoint dragForce = (physicBodies[i]->GetLinearVelocity() * -1) * physicBodies[i]->friction;
+					//FUERZA DE FRICCIÓN
+					if (physicBodies[i]->colList[j]->type == BodyType::STATIC && frictioOn)
+					{
+						fPoint dragForce = (physicBodies[i]->GetLinearVelocity() * -1) * physicBodies[i]->friction;
 
-					physicBodies[i]->AddForceToCenter(dragForce);
+						physicBodies[i]->AddForceToCenter(dragForce);
+					}
+					//IMPEDIR QUE ENTRE DENTRO DE UN RIGIDBODY
+					fPoint colPoint = CollisionPoint(*physicBodies[i], *physicBodies[i]->colList[j]);
+					ResolveColForce(*physicBodies[i], *physicBodies[i]->colList[j], colPoint);
+
 				}
-				//IMPEDIR QUE ENTRE DENTRO DE UN RIGIDBODY
-				fPoint colPoint = CollisionPoint(*physicBodies[i], *physicBodies[i]->colList[j]);
-				ResolveColForce(*physicBodies[i], *physicBodies[i]->colList[j], colPoint);
-
-			
 			}
 		}
 
