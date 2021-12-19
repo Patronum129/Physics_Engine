@@ -7,16 +7,16 @@
 #include "Animation.h"
 #include "Module.h"
 
+class PhysicWorld;
+class PhysicBody;
 
 struct Player1 {
 	Animation idlePlayerAnim;
 	Animation jumpingPlayerAnim;
 	Animation walkingPlayerAnim;
 	Animation deathPlayerAnim;
+	PhysicBody* player;
 };
-
-class PhysicWorld;
-class PhysicBody;
 
 class Scene : public Module
 {
@@ -52,6 +52,7 @@ public:
 
 	PhysicBody* walls[3];
 	PhysicBody* floor[6];
+	PhysicBody* water;
 
 	PhysicWorld* world;
 
@@ -65,11 +66,11 @@ private:
 	{
 		IDLE,
 		WALK,
-		JUMP,
-		DEATH
+		JUMP
 	};
 	State pState;
-
+	float maxSpeedX;
+	float minSpeedX;
 
 	SDL_Texture* img;
 
