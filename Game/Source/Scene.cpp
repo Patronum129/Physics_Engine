@@ -63,26 +63,36 @@ bool Scene::Start()
 	p->walkingPlayerAnim.mustFlip = true;
 	p->jumpingPlayerAnim.speed = 0.1f;
 
-	playerTexture = app->tex->Load("Assets/textures/Mage80x64.png");
+	playerTexture = app->tex->Load("Assets/Textures/Mage80x64.png");
 
 	world = new PhysicWorld({ 0,10 });
 
-	walls[0] = new PhysicBody({ 0,0 }, BodyType::STATIC, 1280, 5);
-	walls[1] = new PhysicBody({ 0,0 }, BodyType::STATIC, 5, 720);
-	walls[2] = new PhysicBody({ 1275,0 }, BodyType::STATIC, 5, 720);
+	p->player = new PhysicBody({ 100,100 }, BodyType::DYNAMIC, 25);
 
-	floor[0] = new PhysicBody({ 0,576 }, BodyType::STATIC, 560, 144);
-	floor[1] = new PhysicBody({ 560,672 }, BodyType::STATIC, 192, 48);
-	floor[2] = new PhysicBody({ 752,576 }, BodyType::STATIC, 560, 144);
-	floor[3] = new PhysicBody({ 96,416 }, BodyType::STATIC, 32, 32);
-	floor[4] = new PhysicBody({ 384,544 }, BodyType::STATIC, 32, 32);
-	floor[5] = new PhysicBody({ 928,416 }, BodyType::STATIC, 32, 32);
+	world->AddPhysicBody(p->player);
+	p->player->gravityScale = 5;
+	p->player->friction = 1;
 
-	
+	walls[0] = new PhysicBody({ 640,0 }, BodyType::STATIC, 1280, 5);
+	walls[1] = new PhysicBody({ 0,360 }, BodyType::STATIC, 5, 720);
+	walls[2] = new PhysicBody({ 1270,354 }, BodyType::STATIC, 5, 720);
+
+	floor[0] = new PhysicBody({ 280,674 }, BodyType::STATIC, 560, 144);
+	floor[1] = new PhysicBody({ 650,722 }, BodyType::STATIC, 192, 48);
+	floor[2] = new PhysicBody({ 1064,674 }, BodyType::STATIC, 560, 144);
+	floor[3] = new PhysicBody({ 124,450 }, BodyType::STATIC, 4, 16);
+	floor[4] = new PhysicBody({ 412,578 }, BodyType::STATIC, 4, 16);
+	floor[5] = new PhysicBody({ 954,450 }, BodyType::STATIC, 4, 16);
+
+
 
 	for (int i = 0; i < 3; i++)
 	{
 		world->AddPhysicBody(walls[i]);
+	}
+	for (int i = 0; i < 6; i++)
+	{
+		world->AddPhysicBody(floor[i]);
 	}
 
 	return true;
@@ -100,7 +110,63 @@ bool Scene::Update(float dt)
 {
 	world->Update(1.0 / 60);
 
-	return true;
+	switch (pState)
+	{
+	case IDLE:
+		currentAnim = &p->idlePlayerAnim;
+		break;
+	case WALK:
+		currentAnim = &p->walkingPlayerAnim;
+		break;
+	case JUMP:
+		currentAnim = &p->jumpingPlayerAnim;
+		break;
+	}
+	SDL_Rect rect = currentAnim->GetCurrentFrame();
+
+	
+	bool ret = true;
+
+	//Player movement
+	maxSpeedX = 2;
+	minSpeedX = -2;
+
+	if (pState == WALK || pState == JUMP) {
+		pState = IDLE;
+	}
+
+	if ((app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT))
+	{
+		p->player->SetLinearVelocity({ 80, p->player->GetLinearVelocity().y });
+		if (pState == IDLE) {
+			pState = WALK;
+		}
+		p->walkingPlayerAnim.Update();
+		p->idlePlayerAnim.Reset();
+	}
+	//Left
+	if ((app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT))
+	{
+		p->player->SetLinearVelocity({ -80, p->player->GetLinearVelocity().y });
+		if (pState == IDLE) {
+			pState = WALK;
+		}
+		p->walkingPlayerAnim.Update();
+		p->idlePlayerAnim.Reset();
+	}
+	//Jump
+	if ((app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN))
+	{
+		p->player->AddForceToCenter({ 0.0f, -6000.0f });
+		if (pState == IDLE) {
+			pState = JUMP;
+		}
+		p->jumpingPlayerAnim.Update();
+		p->idlePlayerAnim.Reset();
+		p->walkingPlayerAnim.Reset();
+	}
+
+    return true;
 }
 
 // Called each loop iteration
@@ -109,6 +175,9 @@ bool Scene::PostUpdate()
 	bool ret = true;
 
 	app->render->DrawTexture(img, 0, 0);
+
+	app->render->DrawTexture(playerTexture, (p->player->position.x - 25), (p->player->position.y - 25),
+		&(currentAnim->GetCurrentFrame()), 1);
 
 	app->render->DrawRectangle({ 0,0,1280,5 }, 255, 0, 0);
 	app->render->DrawRectangle({ 1275,0,5,720 }, 255, 0, 0);
